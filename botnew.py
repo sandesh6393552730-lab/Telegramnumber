@@ -32,7 +32,7 @@ BOT_TOKEN = "8852300357:AAHHfKP6qsbdJcNXhZP0UWIqTWrAWgSA2n4"
 ADMIN_ID = 1752541652
 
 # Official Channel Details
-CHANNEL_USERNAME = "@Dracula_injector_selller"
+CHANNEL_USERNAME = "@DRACULA_INJECTOR_SELLLER"
 CHANNEL_LINK = "https://t.me/Dracula_injector_selller"
 
 # Developer Details
