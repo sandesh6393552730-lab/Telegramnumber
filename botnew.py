@@ -331,6 +331,3 @@ def get_number_info(message):
             bot.edit_message_text(f"❌ **एरर आया:** `{str(e)}`", chat_id=message.chat.id, message_id=loading_msg.message_id, parse_mode='Markdown')
     else:
         bot.reply_to(message, "⚠️ **कृपया सिर्फ 10 अंकों का वैध मोबाइल नंबर भेजें।**\nउदाहरण: `9876543210`", parse_mode='Markdown')
-
-print("✅ Sandesh Number Info Bot चालू हो गया है...")
-bot.infinity_polling()
