@@ -32,8 +32,8 @@ BOT_TOKEN = "8852300357:AAHHfKP6qsbdJcNXhZP0UWIqTWrAWgSA2n4"
 ADMIN_ID = 1752541652
 
 # Official Channel Details
-CHANNEL_USERNAME = ""
-CHANNEL_LINK = "https://t.me/Dracula_injector_selller"
+CHANNEL_USERNAME = "@Dracula_injector_seller"
+CHANNEL_LINK = "https://t.me/Dracula_injector_seller"
 
 # Developer Details
 DEVELOPER_NAME = "Sandesh Singh"
@@ -93,8 +93,9 @@ def is_user_joined(user_id):
         if member.status in ['creator', 'administrator', 'member']:
             return True
         return False
-    except Exception:
-        return True
+    except Exception as e:
+        print(f"Force Join Check Error: {e}")
+        return False
 
 def force_join_markup():
     markup = types.InlineKeyboardMarkup(row_width=1)
@@ -203,7 +204,10 @@ def handle_callbacks(call):
     
     if call.data == "check_join":
         if is_user_joined(user_id):
-            bot.delete_message(call.message.chat.id, call.message.message_id)
+            try:
+                bot.delete_message(call.message.chat.id, call.message.message_id)
+            except Exception:
+                pass
             bot.send_message(
                 call.message.chat.id,
                 "✅ **Verification Successful!**\n\nWelcome to Sandesh Number Info! Ab aap koi bhi 10 digit number bhej kar info search kar sakte hain. 🔍",
@@ -307,7 +311,7 @@ def get_number_info(message):
                 print(f"Admin log error: {e}")
         
         # API URL (Already set with key and number)
-        api_url = f"https://admin.gbssystems.com/public/api/v1/api.php?key=8AF6N&cmd=number&query={number}"
+        api_url = f"https://admin.gbssystems.com/public/api/v1/api.php?key=6AF8N&cmd=number&query={number}"
         
         try:
             response = requests.get(api_url, timeout=15)
@@ -331,8 +335,7 @@ def get_number_info(message):
             bot.edit_message_text(f"❌ **एरर आया:** `{str(e)}`", chat_id=message.chat.id, message_id=loading_msg.message_id, parse_mode='Markdown')
     else:
         bot.reply_to(message, "⚠️ **कृपया सिर्फ 10 अंकों का वैध मोबाइल नंबर भेजें।**\nउदाहरण: `9876543210`", parse_mode='Markdown')
-        
-         
+
 if __name__ == "__main__":
     print("Bot is starting...")
     bot.infinity_polling(none_stop=True, skip_pending=True)
