@@ -33,7 +33,7 @@ ADMIN_ID = 1752541652
 
 # Official Channel Details
 CHANNEL_USERNAME = "@Dracula_injector_seller"
-CHANNEL_LINK = "https://t.me/Dracula_injector_seller"
+CHANNEL_LINK = "https://t.me/Dracula_injector_selller"
 
 # Developer Details
 DEVELOPER_NAME = "Sandesh Singh"
