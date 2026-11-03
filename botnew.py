@@ -36,7 +36,7 @@ CHANNEL_LINK = "https://t.me/Dracula_injector_selller"
 
 # यहाँ अपने चैनल की Numeric ID डालें (जैसे -100xxxxxxxxxx)
 # अगर अभी ID नहीं पता, तो इसे ऐसे ही रहने दें
-CHANNEL_ID = -1002345678901  # <-- अपनी असली चैनल ID से बदलें
+CHANNEL_ID = -1002649665421  # <-- अपनी असली चैनल ID से बदलें
 
 # Developer Details
 DEVELOPER_NAME = "Sandesh Singh"
