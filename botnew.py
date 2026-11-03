@@ -32,7 +32,7 @@ BOT_TOKEN = "8852300357:AAHHfKP6qsbdJcNXhZP0UWIqTWrAWgSA2n4"
 ADMIN_ID = 1752541652
 
 # Official Channel Details
-CHANNEL_USERNAME = "@Dracula_injector_seller"
+CHANNEL_USERNAME = "@Dracula_injector_selller"
 CHANNEL_LINK = "https://t.me/Dracula_injector_selller"
 
 # Developer Details
@@ -86,6 +86,9 @@ def get_stats():
 
 # ==================== 🛡️ FORCE JOIN CHECK ====================
 def is_user_joined(user_id):
+    # Bot Owner / Admin bypass
+    if user_id == ADMIN_ID:
+        return True
     if not CHANNEL_USERNAME:
         return True
     try:
@@ -94,7 +97,7 @@ def is_user_joined(user_id):
             return True
         return False
     except Exception as e:
-        print(f"Force Join Check Error: {e}")
+        print(f"Force Join Check Error for user {user_id}: {e}")
         return False
 
 def force_join_markup():
