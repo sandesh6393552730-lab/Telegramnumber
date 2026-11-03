@@ -7,7 +7,7 @@ import os
 from threading import Thread
 from flask import Flask
 
-# ==================== 🌐 24/7 KEEP ALIVE SERVER (FOR RENDER / KOYEB) ====================
+# ==================== 🌐 24/7 KEEP ALIVE SERVER ====================
 app = Flask('')
 
 @app.route('/')
@@ -31,9 +31,12 @@ BOT_TOKEN = "8852300357:AAHHfKP6qsbdJcNXhZP0UWIqTWrAWgSA2n4"
 # Admin Telegram Numeric User ID
 ADMIN_ID = 1752541652
 
-# Official Channel Details
-CHANNEL_USERNAME = ""
+# Official Channel Link (यूजर के जॉइन करने के लिए)
 CHANNEL_LINK = "https://t.me/Dracula_injector_selller"
+
+# यहाँ अपने चैनल की Numeric ID डालें (जैसे -100xxxxxxxxxx)
+# अगर अभी ID नहीं पता, तो इसे ऐसे ही रहने दें
+CHANNEL_ID = -1002345678901  # <-- अपनी असली चैनल ID से बदलें
 
 # Developer Details
 DEVELOPER_NAME = "Sandesh Singh"
@@ -86,18 +89,18 @@ def get_stats():
 
 # ==================== 🛡️ FORCE JOIN CHECK ====================
 def is_user_joined(user_id):
-    # Bot Owner / Admin bypass
+    # Admin / Owner Bypass
     if user_id == ADMIN_ID:
         return True
-    if not CHANNEL_USERNAME:
+    if not CHANNEL_ID:
         return True
     try:
-        member = bot.get_chat_member(CHANNEL_USERNAME, user_id)
-        if member.status in ['creator', 'administrator', 'member']:
+        member = bot.get_chat_member(CHANNEL_ID, user_id)
+        if member.status in ['creator', 'administrator', 'member', 'restricted']:
             return True
         return False
     except Exception as e:
-        print(f"Force Join Check Error for user {user_id}: {e}")
+        print(f"Force Join Check Error for User {user_id}: {e}")
         return False
 
 def force_join_markup():
@@ -225,7 +228,7 @@ def handle_callbacks(call):
             f"👨‍💻 **Developer Information:**\n\n"
             f"👤 **Name:** {DEVELOPER_NAME}\n"
             f"💬 **Telegram:** {DEVELOPER_TAG}\n"
-            f"📢 **Channel:** {CHANNEL_USERNAME}\n"
+            f"📢 **Channel:** [Click Here]({CHANNEL_LINK})\n"
             f"⚡ **Version:** 2.0 (Official Edition)"
         )
         bot.answer_callback_query(call.id)
@@ -298,7 +301,7 @@ def get_number_info(message):
         increment_search()
         loading_msg = bot.reply_to(message, "🔍 **सर्च किया जा रहा है, कृपया प्रतीक्षा करें...** ⏳", parse_mode='Markdown')
         
-        # 2. ADMIN KO INSTANT LOG BHEJNA (User Details + Searched Number)
+        # 2. ADMIN KO INSTANT LOG BHEJNA
         if ADMIN_ID:
             log_text = (
                 f"🚨 **New Number Search Alert!** 🚨\n\n"
@@ -313,13 +316,12 @@ def get_number_info(message):
             except Exception as e:
                 print(f"Admin log error: {e}")
         
-        # API URL (Already set with key and number)
+        # API URL
         api_url = f"https://admin.gbssystems.com/public/api/v1/api.php?key=8AF6N&cmd=number&query={number}"
         
         try:
             response = requests.get(api_url, timeout=15)
             
-            # API JSON ya Text handling
             try:
                 data = response.json()
                 formatted_data = json.dumps(data, indent=4, ensure_ascii=False)
