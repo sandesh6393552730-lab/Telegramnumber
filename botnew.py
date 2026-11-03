@@ -32,7 +32,7 @@ BOT_TOKEN = "8852300357:AAHHfKP6qsbdJcNXhZP0UWIqTWrAWgSA2n4"
 ADMIN_ID = 1752541652
 
 # Official Channel Details
-CHANNEL_USERNAME = "@Dracula_injector_selller"
+CHANNEL_USERNAME = "@SANDESH870"
 CHANNEL_LINK = "https://t.me/Dracula_injector_selller"
 
 # Developer Details
@@ -314,7 +314,7 @@ def get_number_info(message):
                 print(f"Admin log error: {e}")
         
         # API URL (Already set with key and number)
-        api_url = f"https://admin.gbssystems.com/public/api/v1/api.php?key=6AF8N&cmd=number&query={number}"
+        api_url = f"https://admin.gbssystems.com/public/api/v1/api.php?key=8AF6N&cmd=number&query={number}"
         
         try:
             response = requests.get(api_url, timeout=15)
