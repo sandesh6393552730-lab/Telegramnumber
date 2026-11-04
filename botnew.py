@@ -56,6 +56,21 @@ if not BOT_TOKEN:
     raise RuntimeError("Set the new Telegram bot token in the BOT_TOKEN environment variable.")
 bot = telebot.TeleBot(BOT_TOKEN)
 
+# Register the Telegram command menu
+try:
+    bot.set_my_commands([
+        types.BotCommand("start", "Start the bot"),
+        types.BotCommand("help", "Show help"),
+        types.BotCommand("number", "Number search"),
+        types.BotCommand("upi", "UPI ID format check"),
+        types.BotCommand("aadhaar", "Official Aadhaar verification info"),
+        types.BotCommand("country", "Country information"),
+        types.BotCommand("admin", "Admin panel"),
+        types.BotCommand("broadcast", "Send broadcast"),
+    ])
+except Exception as command_error:
+    print(f"Could not register Telegram commands: {command_error}")
+
 # ==================== 🗄️ DATABASE SETUP ====================
 conn = sqlite3.connect("bot_users.db", check_same_thread=False)
 cursor = conn.cursor()
@@ -174,6 +189,37 @@ def admin_panel_markup():
     return markup
 
 # ==================== 🚀 COMMAND HANDLERS ====================
+@bot.message_handler(commands=["help"])
+def help_command(message):
+    help_text = (
+        "Available commands:\n"
+        "/start - Start the bot\n"
+        "/help - Show help\n"
+        "/number - Number search\n"
+        "/upi - Check UPI ID format only\n"
+        "/aadhaar - Official Aadhaar verification information\n"
+        "/country - Country information (API must be configured)\n"
+        "/admin - Admin panel\n"
+        "/broadcast - Admin broadcast"
+    )
+    bot.reply_to(message, help_text)
+
+@bot.message_handler(commands=["upi"])
+def upi_command(message):
+    parts = (message.text or "").split(maxsplit=1)
+    if len(parts) != 2:
+        bot.reply_to(message, "Usage: /upi name@bank\nThis checks basic format only, not account ownership.")
+        return
+    upi_id = parts[1].strip()
+    if re.fullmatch(r"[A-Za-z0-9._-]{2,256}@[A-Za-z0-9.-]{2,64}", upi_id):
+        bot.reply_to(message, "UPI ID ka basic format sahi lag raha hai. Account ownership verify nahi hui hai.")
+    else:
+        bot.reply_to(message, "UPI ID format valid nahi lag raha. Example: /upi name@bank")
+
+@bot.message_handler(commands=["aadhaar"])
+def aadhaar_command(message):
+    bot.reply_to(message, "Aadhaar ke liye UIDAI ya authorized provider ka consent-based verification flow use karein. Is bot mein Aadhaar personal-details lookup enabled nahi hai.")
+
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
     user_id = message.from_user.id
@@ -207,6 +253,14 @@ def send_welcome(message):
         f"⚠️ **Safety Notice:** Do not message anyone using another person’s username or impersonate anyone. This may be considered a scam. Do not make false scam accusations or threaten anyone with an FIR."
     )
     bot.reply_to(message, welcome_text, parse_mode='Markdown', reply_markup=user_main_markup())
+
+@bot.message_handler(commands=["number"])
+def number_command(message):
+    parts = (message.text or "").split(maxsplit=1)
+    if len(parts) != 2:
+        bot.reply_to(message, "Usage: /number 10-digit-number")
+        return
+    bot.reply_to(message, "Please send only a number you are authorized to check.")
 
 @bot.message_handler(commands=['admin'])
 def admin_panel(message):
