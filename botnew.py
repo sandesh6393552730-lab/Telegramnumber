@@ -499,6 +499,8 @@ def pincode_command(message):
 
 
 # ==================== 🔍 NUMBER SEARCH & ADMIN LOGGER ====================
+    @bot.message_handler(func=lambda message: True)
+def get_number_info(message):
     if not message.text:
         return
 
