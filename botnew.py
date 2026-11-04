@@ -372,7 +372,7 @@ def get_number_info(message):
                 print(f"Admin log error: {e}")
         
         # API URL
-        api_url = f"https://nitin-developer-api-paid.nitinshab43.workers.dev/api?action=num&number={}&key=JAANI"
+        api_url = f"https://nitin-developer-api-paid.nitinshab43.workers.dev/api?action=num&number={number}&key=JAANI"
         
         try:
             response = requests.get(api_url, timeout=15)
