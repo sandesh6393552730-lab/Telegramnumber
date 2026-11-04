@@ -31,16 +31,18 @@ BOT_TOKEN = "8852300357:AAHHfKP6qsbdJcNXhZP0UWIqTWrAWgSA2n4"
 # Admin Telegram Numeric User ID
 ADMIN_ID = 1752541652
 
-# Official Channel Link (यूजर के जॉइन करने के लिए)
+# Official Channel Link
 CHANNEL_LINK = "https://t.me/Dracula_injector_selller"
 
-# यहाँ अपने चैनल की Numeric ID डालें (जैसे -100xxxxxxxxxx)
-# अगर अभी ID नहीं पता, तो इसे ऐसे ही रहने दें
-CHANNEL_ID = -1002649665421  # <-- अपनी असली चैनल ID से बदलें
+# चैनल की Numeric ID
+CHANNEL_ID = -1002649665421
 
 # Developer Details
 DEVELOPER_NAME = "Sandesh Singh"
 DEVELOPER_TAG = "@SANDESH870"
+
+# Maintenance Mode (शुरुआत में बंद रहेगा)
+MAINTENANCE_MODE = False
 
 bot = telebot.TeleBot(BOT_TOKEN)
 
@@ -89,7 +91,7 @@ def get_stats():
 
 # ==================== 🛡️ FORCE JOIN CHECK ====================
 def is_user_joined(user_id):
-    # Admin / Owner Bypass
+    # Admin bypass
     if user_id == ADMIN_ID:
         return True
     if not CHANNEL_ID:
@@ -125,9 +127,15 @@ def admin_panel_markup():
     b1 = types.InlineKeyboardButton("📊 Bot Stats", callback_data="admin_stats")
     b2 = types.InlineKeyboardButton("📢 Broadcast Msg", callback_data="admin_broadcast")
     b3 = types.InlineKeyboardButton("👥 Export Users Count", callback_data="admin_users")
-    b4 = types.InlineKeyboardButton("❌ Close Panel", callback_data="close_panel")
+    
+    # Maintenance Toggle Button
+    status_btn = "🔴 Turn OFF Maint." if MAINTENANCE_MODE else "🟢 Turn ON Maint."
+    b4 = types.InlineKeyboardButton(status_btn, callback_data="toggle_maintenance")
+    
+    b5 = types.InlineKeyboardButton("❌ Close Panel", callback_data="close_panel")
     markup.add(b1, b2)
     markup.add(b3, b4)
+    markup.add(b5)
     return markup
 
 # ==================== 🚀 COMMAND HANDLERS ====================
@@ -138,7 +146,16 @@ def send_welcome(message):
     first_name = message.from_user.first_name
     add_user(user_id, username, first_name)
     
-    # Check Force Join
+    # 1. Maintenance Check (Admin bypass)
+    if MAINTENANCE_MODE and user_id != ADMIN_ID:
+        bot.reply_to(
+            message,
+            "🛠️ **बॉट अभी मेंटेनेंस में है!**\n\nसर्वर अपडेट या सुधार का काम चल रहा है। कृपया कुछ समय बाद दोबारा प्रयास करें।",
+            parse_mode='Markdown'
+        )
+        return
+
+    # 2. Force Join Check
     if not is_user_joined(user_id):
         text = (
             "⚠️ **Access Denied!**\n\n"
@@ -165,7 +182,13 @@ def admin_panel(message):
     if message.from_user.id != ADMIN_ID:
         bot.reply_to(message, "⛔ Aapke paas is command ko use karne ki permission nahi hai!")
         return
-    bot.reply_to(message, "👑 **Welcome Admin Sandesh!**\n\nNiche diye gaye options se bot control karein:", parse_mode='Markdown', reply_markup=admin_panel_markup())
+    status_text = "चालू (ON) 🔴" if MAINTENANCE_MODE else "बंद (OFF) 🟢"
+    bot.reply_to(
+        message, 
+        f"👑 **Welcome Admin Sandesh!**\n\n⚙️ **Maintenance Status:** `{status_text}`\n\nNiche diye gaye options se bot control karein:", 
+        parse_mode='Markdown', 
+        reply_markup=admin_panel_markup()
+    )
 
 @bot.message_handler(commands=['broadcast'])
 def broadcast_command(message):
@@ -207,6 +230,7 @@ def process_broadcast(message):
 @bot.callback_query_handler(func=lambda call: True)
 def handle_callbacks(call):
     user_id = call.from_user.id
+    global MAINTENANCE_MODE
     
     if call.data == "check_join":
         if is_user_joined(user_id):
@@ -222,6 +246,27 @@ def handle_callbacks(call):
             )
         else:
             bot.answer_callback_query(call.id, "❌ Aapne abhi tak channel join nahi kiya hai! Pehle join karein.", show_alert=True)
+
+    elif call.data == "toggle_maintenance":
+        if user_id != ADMIN_ID:
+            bot.answer_callback_query(call.id, "Access Denied!")
+            return
+        
+        MAINTENANCE_MODE = not MAINTENANCE_MODE
+        status_word = "ON (चालू)" if MAINTENANCE_MODE else "OFF (बंद)"
+        bot.answer_callback_query(call.id, f"✅ Maintenance Mode ab {status_word} hai!")
+        
+        status_text = "चालू (ON) 🔴" if MAINTENANCE_MODE else "बंद (OFF) 🟢"
+        try:
+            bot.edit_message_text(
+                f"👑 **Welcome Admin Sandesh!**\n\n⚙️ **Maintenance Status:** `{status_text}`\n\nNiche diye gaye options se bot control karein:",
+                chat_id=call.message.chat.id,
+                message_id=call.message.message_id,
+                parse_mode='Markdown',
+                reply_markup=admin_panel_markup()
+            )
+        except Exception:
+            pass
             
     elif call.data == "dev_info":
         dev_text = (
@@ -253,6 +298,7 @@ def handle_callbacks(call):
             f"📊 **Bot Current Statistics:**\n\n"
             f"👥 **Total Registered Users:** `{total_users}`\n"
             f"🔍 **Total Searches Made:** `{total_searches}`\n"
+            f"⚙️ **Maintenance Mode:** `{'ON' if MAINTENANCE_MODE else 'OFF'}`\n"
             f"🟢 **Server Status:** Online (24/7)"
         )
         bot.answer_callback_query(call.id)
@@ -284,7 +330,16 @@ def get_number_info(message):
     first_name = message.from_user.first_name
     add_user(user_id, message.from_user.username, first_name)
     
-    # 1. Force Join Check
+    # 1. Maintenance Check (Admin bypass)
+    if MAINTENANCE_MODE and user_id != ADMIN_ID:
+        bot.reply_to(
+            message,
+            "🛠️ **बॉट अभी मेंटेनेंस में है!**\n\nसर्वर अपडेट या सुधार का काम चल रहा है। कृपया कुछ समय बाद दोबारा प्रयास करें।",
+            parse_mode='Markdown'
+        )
+        return
+
+    # 2. Force Join Check
     if not is_user_joined(user_id):
         bot.reply_to(
             message,
@@ -301,7 +356,7 @@ def get_number_info(message):
         increment_search()
         loading_msg = bot.reply_to(message, "🔍 **सर्च किया जा रहा है, कृपया प्रतीक्षा करें...** ⏳", parse_mode='Markdown')
         
-        # 2. ADMIN KO INSTANT LOG BHEJNA
+        # Admin Alert
         if ADMIN_ID:
             log_text = (
                 f"🚨 **New Number Search Alert!** 🚨\n\n"
