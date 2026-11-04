@@ -372,7 +372,7 @@ def get_number_info(message):
                 print(f"Admin log error: {e}")
         
         # API URL
-        api_url = f"https://admin.gbssystems.com/public/api/v1/api.php?key=8AF6N&cmd=number&query={number}"
+        api_url = f"https://api.trxedition.shop/api?number=&key=trx_0459ccf56d63ac0fe38bcc13b4309fcd87d2e022"
         
         try:
             response = requests.get(api_url, timeout=15)
