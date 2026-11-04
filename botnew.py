@@ -499,8 +499,11 @@ def pincode_command(message):
 
 
 # ==================== 🔍 NUMBER SEARCH & ADMIN LOGGER ====================
-@bot.message_handler(func=lambda message: True)
-def get_number_info(message):
+    if not message.text:
+        return
+
+    if message.text.strip().startswith("/"):
+        return
     user_id = message.from_user.id
     username = f"@{message.from_user.username}" if message.from_user.username else "No Username"
     first_name = message.from_user.first_name
