@@ -27,7 +27,7 @@ def keep_alive():
 keep_alive()
 
 # ==================== ⚙️ CONFIGURATION ====================
-BOT_TOKEN = os.environ.get("8852300357:AAHHfKP6qsbdJcNXhZP0UWIqTWrAWgSA2n4", "")
+BOT_TOKEN = "8852300357:AAHHfKP6qsbdJcNXhZP0UWIqTWrAWgSA2n4"
 
 # API URLs: examples are shown in Admin > API Settings. Keep URLs blank until configured.
 NUMBER_API_URL = "https://nitin-developer-api-paid.nitinshab43.workers.dev/api?action=num&number={number}&key=JAANI"
