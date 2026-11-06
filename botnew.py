@@ -58,7 +58,7 @@ CHANNELS = [
 # 🔗 5 Services API Endpoints ({query} standardized)
 API_CONFIG = {
     "number": "https://nitin-developer-api-paid.nitinshab43.workers.dev/api?action=num&number={query}&key=JAANI",
-    "vehicle": "https://admin.gbssystems.com/public/api/v1/api.php?key=CKHB7&cmd=rc&query={query}",
+    "vehicle": "https://all-api-by-nitin-developer-best1.binderdhaniya6.workers.dev/api?type=vehicle&search={query}&api_key=NITIN",
     "ration": "https://admin.gbssystems.com/public/api/v1/api.php?key=CKHB7&cmd=ration&query={query}",
     "lpg": "https://admin.gbssystems.com/public/api/v1/api.php?key=CKHB7&cmd=lpg&query={query}",
     "aadhaar": "https://admin.gbssystems.com/public/api/v1/api.php?key=CKHB7&cmd=family&query={query}"
