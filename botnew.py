@@ -32,18 +32,30 @@ ADMIN_ID = 1752541652
 DEVELOPER_NAME = "Sandesh Singh"
 DEVELOPER_TAG = "@SANDESH870"
 
-# 🖼️ बैनर फोटो URL (Start स्क्रीन और रिजल्ट के लिए)
+# 🖼️ Banner Images
 WELCOME_PHOTO_URL = "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80"
 SNAKE_PHOTO_URL = "https://images.unsplash.com/photo-1531386151447-fd76ad50012f?auto=format&fit=crop&w=800&q=80"
 
-# 📢 3 चैनल्स की सूची (यहाँ अपने लिंक्स और Negative Chat IDs सेट करें)
+# 📢 Channels List (Aapki Private Link aur IDs ke saath)
 CHANNELS = [
-    {"name": "Join 1 ↗", "url": "https://t.me/Dracula_injector_selller", "id": -1002649665421},
-   # {"name": "Join 2 ↗", "url": "https://t.me/+NJstT20iTmozYjc1", "id": -1003280242572},
-    {"name": "Join 3 ↗", "url": "https://t.me/SANDESH_VIP_MOD02", "id": -1002589313551}
+    {
+        "name": "Join 1 ↗",
+        "url": "https://t.me/Dracula_injector_selller",
+        "id": -1002649665421
+    },
+    {
+        "name": "Join 2 ↗",
+        "url": "https://t.me/+NJstT20iTmozYjc1",
+        "id": -1003280242572
+    },
+    {
+        "name": "Join 3 ↗",
+        "url": "https://t.me/SANDESH_VIP_MOD02",
+        "id": -1002589313551
+    }
 ]
 
-# 🔗 5 सर्विसेज के API Endpoints (सभी जगह {query} सेट किया गया है)
+# 🔗 5 Services API Endpoints ({query} standardized)
 API_CONFIG = {
     "number": "https://admin.gbssystems.com/public/api/v1/api.php?key=CKHB7&cmd=number&query={query}",
     "vehicle": "https://admin.gbssystems.com/public/api/v1/api.php?key=CKHB7&cmd=rc&query={query}",
@@ -117,13 +129,16 @@ def get_stats():
 def check_all_joined(user_id):
     if user_id == ADMIN_ID:
         return True
+
     for ch in CHANNELS:
         try:
             member = bot.get_chat_member(ch["id"], user_id)
-            if member.status not in ['creator', 'administrator', 'member', 'restricted']:
+            if member.status in ['left', 'kicked']:
                 return False
-        except Exception:
-            return False
+        except Exception as e:
+            print(f"[Join Check Alert] {ch['name']} ({ch['id']}): {e}")
+            continue
+
     return True
 
 def force_join_markup():
@@ -168,7 +183,7 @@ def send_welcome(message):
     add_user(user_id, message.from_user.username, first_name)
 
     if maintenance_enabled() and user_id != ADMIN_ID:
-        bot.reply_to(message, "🛠 **Bot Maintenance Mode me hai!**\nकृपया कुछ समय बाद पुनः प्रयास करें।", parse_mode='Markdown')
+        bot.reply_to(message, "🛠 **Bot Maintenance Mode me hai!**\nKripya thodi der baad prayas karein.", parse_mode='Markdown')
         return
 
     if not check_all_joined(user_id):
@@ -188,7 +203,7 @@ def send_welcome(message):
     user_states.pop(user_id, None)
     welcome_caption = (
         f"✨ **Welcome {first_name}!** ✨\n\n"
-        f"नीचे दिए गए बटनों में से अपनी सेवा चुनें:\n\n"
+        f"Niche diye gaye options me se apni service chunein:\n\n"
         f"👨‍💻 **Developer:** [{DEVELOPER_NAME}]({CHANNELS[0]['url']})\n"
         f"💬 **Admin:** {DEVELOPER_TAG}\n"
         f"⚡ **Status:** Active & Ready"
@@ -211,7 +226,7 @@ def admin_panel(message):
 def broadcast_command(message):
     if message.from_user.id != ADMIN_ID:
         return
-    msg = bot.reply_to(message, "📢 **Broadcast Message भेजें:**\n(रद्द करने के लिए /cancel लिखें)")
+    msg = bot.reply_to(message, "📢 **Broadcast Message bhejein:**\n(Cancel karne ke liye /cancel likhein)")
     bot.register_next_step_handler(msg, process_broadcast)
 
 def process_broadcast(message):
@@ -221,7 +236,7 @@ def process_broadcast(message):
     users = get_all_users()
     total = len(users)
     success, failed = 0, 0
-    status_msg = bot.reply_to(message, f"⏳ Broadcast शुरू हो रहा है... (Total: {total})")
+    status_msg = bot.reply_to(message, f"⏳ Broadcast shuru ho raha hai... (Total: {total})")
     for uid in users:
         try:
             bot.copy_message(chat_id=uid, from_chat_id=message.chat.id, message_id=message.message_id)
@@ -249,18 +264,18 @@ def handle_callbacks(call):
                 pass
             bot.send_message(
                 call.message.chat.id,
-                f"🎉 **Welcome {call.from_user.first_name}!**\nसत्यापन पूरा हुआ। कृपया नीचे दिए गए विकल्पों में से चुनें:",
+                f"🎉 **Welcome {call.from_user.first_name}!**\nVerification safal raha. Niche diye gaye menu se service chunein:",
                 reply_markup=user_main_markup()
             )
         else:
-            bot.answer_callback_query(call.id, "❌ आपने अभी तक सभी चैनल्स जॉइन नहीं किए हैं!", show_alert=True)
+            bot.answer_callback_query(call.id, "❌ Aapne abhi tak sabhi channels join nahi kiye hain!", show_alert=True)
 
     elif call.data == "svc_number":
         user_states[user_id] = "waiting_number"
         bot.answer_callback_query(call.id)
         bot.send_message(
             call.message.chat.id,
-            "📱 **Number Info**\n\nकृपया 10 अंकों का मोबाइल नंबर भेजें।\n🔹 **उदाहरण:** `9876543210`",
+            "📱 **Number Info**\n\nKripya 10 ankon ka mobile number bhejein.\n🔹 **Udaharan:** `9876543210`",
             parse_mode='Markdown'
         )
 
@@ -269,7 +284,7 @@ def handle_callbacks(call):
         bot.answer_callback_query(call.id)
         bot.send_message(
             call.message.chat.id,
-            "🚗 **Vehicle Info**\n\nकृपया गाड़ी का आरसी/पंजीकरण नंबर बिना स्पेस के भेजें।\n🔹 **उदाहरण:** `UP90AF1849`",
+            "🚗 **Vehicle Info**\n\nKripya gaadi ka RC number bina space ke bhejein.\n🔹 **Udaharan:** `UP90AF1849`",
             parse_mode='Markdown'
         )
 
@@ -278,7 +293,7 @@ def handle_callbacks(call):
         bot.answer_callback_query(call.id)
         bot.send_message(
             call.message.chat.id,
-            "🌾 **Ration Info**\n\nकृपया राशन कार्ड नंबर भेजें।\n🔹 **उदाहरण:** `219500123456`",
+            "🌾 **Ration Info**\n\nKripya ration card number bhejein.\n🔹 **Udaharan:** `219500123456`",
             parse_mode='Markdown'
         )
 
@@ -287,7 +302,7 @@ def handle_callbacks(call):
         bot.answer_callback_query(call.id)
         bot.send_message(
             call.message.chat.id,
-            "🔥 **LPG Info**\n\nकृपया 17 अंकों की एलपीजी कंज्यूमर आईडी भेजें।\n🔹 **उदाहरण:** `37000000123456789`",
+            "🔥 **LPG Info**\n\nKripya LPG consumer ID bhejein.\n🔹 **Udaharan:** `37000000123456789`",
             parse_mode='Markdown'
         )
 
@@ -296,7 +311,7 @@ def handle_callbacks(call):
         bot.answer_callback_query(call.id)
         bot.send_message(
             call.message.chat.id,
-            "🪪 **Aadhaar Info**\n\nकृपया 12 अंकों का आधार नंबर दर्ज करें।\n🔹 **निर्देश:** 12 अंकों की संख्या भेजें।",
+            "🪪 **Aadhaar Info**\n\nKripya 12 ankon ka aadhar number enter karein.\n🔹 **Format:** 12-digit number",
             parse_mode='Markdown'
         )
 
@@ -353,12 +368,12 @@ def handle_text_inputs(message):
     text_input = message.text.strip()
     state = user_states.get(user_id)
 
-    # अगर यूज़र बिना बटन दबाए सीधे 10 अंकों का नंबर भेजता है
+    # Agar user direct 10-digit number bhej de
     if not state and text_input.isdigit() and len(text_input) == 10:
         state = "waiting_number"
 
     if not state:
-        bot.reply_to(message, "ℹ️ कृपया नीचे दिए गए मेनू से सेवा चुनें:", reply_markup=user_main_markup())
+        bot.reply_to(message, "ℹ️ Kripya menu se pehle koi service chunein:", reply_markup=user_main_markup())
         return
 
     service_name = state.replace("waiting_", "")
@@ -367,7 +382,7 @@ def handle_text_inputs(message):
 
     loading_msg = bot.reply_to(message, f"🔍 **Searching {service_name.upper()} Details...** ⏳", parse_mode='Markdown')
 
-    # 👑 ADMIN REAL-TIME ALERT: यूज़र की पूरी जानकारी एडमिन को भेजना
+    # 👑 ADMIN REAL-TIME ALERT
     if ADMIN_ID:
         admin_alert = (
             f"🚨 **New {service_name.upper()} Query Alert!** 🚨\n\n"
@@ -387,7 +402,7 @@ def handle_text_inputs(message):
     target_api = API_CONFIG.get(service_name, "")
     if not target_api:
         bot.edit_message_text(
-            f"⚙️ **{service_name.upper()} API URL** अभी कॉन्फ़िगर नहीं है।",
+            f"⚙️ **{service_name.upper()} API URL** configure nahi hai.",
             chat_id=message.chat.id,
             message_id=loading_msg.message_id,
             parse_mode='Markdown'
@@ -415,7 +430,7 @@ def handle_text_inputs(message):
         bot.delete_message(chat_id=message.chat.id, message_id=loading_msg.message_id)
 
     except Exception as e:
-        bot.edit_message_text(f"❌ एरर आया: `{str(e)}`", chat_id=message.chat.id, message_id=loading_msg.message_id, parse_mode='Markdown')
+        bot.edit_message_text(f"❌ Error aaya: `{str(e)}`", chat_id=message.chat.id, message_id=loading_msg.message_id, parse_mode='Markdown')
 
 if __name__ == "__main__":
     print("Bot is starting...")
