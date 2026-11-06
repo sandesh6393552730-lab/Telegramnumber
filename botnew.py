@@ -12,7 +12,7 @@ app = Flask('')
 
 @app.route('/')
 def home():
-    return "⚡ Sandesh Number Info Bot is Alive & Running 24/7!"
+    return "⚡ Sandesh Multi-Service Bot is Running 24/7!"
 
 def run_web():
     port = int(os.environ.get("PORT", 8080))
@@ -27,24 +27,33 @@ keep_alive()
 
 # ==================== ⚙️ CONFIGURATION ====================
 BOT_TOKEN = "8852300357:AAHHfKP6qsbdJcNXhZP0UWIqTWrAWgSA2n4"
-
-# Admin Telegram Numeric User ID
 ADMIN_ID = 1752541652
 
-# Official Channel Link
-CHANNEL_LINK = "https://t.me/Dracula_injector_selller"
-
-# चैनल की Numeric ID
-CHANNEL_ID = -1002649665421
-
-# Developer Details
 DEVELOPER_NAME = "Sandesh Singh"
 DEVELOPER_TAG = "@SANDESH870"
 
-# Maintenance Mode (शुरुआत में बंद रहेगा)
-MAINTENANCE_MODE = False
+# 🖼️ बैनर फोटो URL (Start स्क्रीन और रिजल्ट के लिए)
+WELCOME_PHOTO_URL = "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80"
+SNAKE_PHOTO_URL = "https://images.unsplash.com/photo-1531386151447-fd76ad50012f?auto=format&fit=crop&w=800&q=80"
+
+# 📢 3 चैनल्स की सूची (यहाँ अपने लिंक्स और Negative Chat IDs सेट करें)
+CHANNELS = [
+    {"name": "Join 1 ↗", "url": "https://t.me/Dracula_injector_selller", "id": -1002649665421},
+    {"name": "Join 2 ↗", "url": "https://t.me/your_channel_2", "id": -1001234567890},
+    {"name": "Join 3 ↗", "url": "https://t.me/SANDESH_VIP_MOD02", "id": -1002589313551}
+]
+
+# 🔗 5 सर्विसेज के API Endpoints (सभी जगह {query} सेट किया गया है)
+API_CONFIG = {
+    "number": "https://admin.gbssystems.com/public/api/v1/api.php?key=CKHB7&cmd=number&query={query}",
+    "vehicle": "https://admin.gbssystems.com/public/api/v1/api.php?key=CKHB7&cmd=rc&query={query}",
+    "ration": "https://admin.gbssystems.com/public/api/v1/api.php?key=CKHB7&cmd=ration&query={query}",
+    "lpg": "https://admin.gbssystems.com/public/api/v1/api.php?key=CKHB7&cmd=lpg&query={query}",
+    "aadhaar": "https://admin.gbssystems.com/public/api/v1/api.php?key=CKHB7&cmd=family&query={query}"
+}
 
 bot = telebot.TeleBot(BOT_TOKEN)
+user_states = {}
 
 # ==================== 🗄️ DATABASE SETUP ====================
 conn = sqlite3.connect("bot_users.db", check_same_thread=False)
@@ -57,7 +66,6 @@ CREATE TABLE IF NOT EXISTS users (
     first_name TEXT
 )
 """)
-
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS stats (
     id INTEGER PRIMARY KEY,
@@ -65,7 +73,23 @@ CREATE TABLE IF NOT EXISTS stats (
 )
 """)
 cursor.execute("INSERT OR IGNORE INTO stats (id, total_searches) VALUES (1, 0)")
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS bot_settings (
+    setting TEXT PRIMARY KEY,
+    value TEXT NOT NULL
+)
+""")
+cursor.execute("INSERT OR IGNORE INTO bot_settings (setting, value) VALUES ('maintenance', '0')")
 conn.commit()
+
+def maintenance_enabled():
+    cursor.execute("SELECT value FROM bot_settings WHERE setting = 'maintenance'")
+    row = cursor.fetchone()
+    return bool(row and row[0] == "1")
+
+def set_maintenance(enabled):
+    cursor.execute("INSERT OR REPLACE INTO bot_settings (setting, value) VALUES ('maintenance', ?)", ("1" if enabled else "0",))
+    conn.commit()
 
 def add_user(user_id, username, first_name):
     cursor.execute("INSERT OR IGNORE INTO users (user_id, username, first_name) VALUES (?, ?, ?)",
@@ -89,312 +113,309 @@ def get_stats():
     total_searches = cursor.fetchone()[0]
     return total_users, total_searches
 
-# ==================== 🛡️ FORCE JOIN CHECK ====================
-def is_user_joined(user_id):
-    # Admin bypass
+# ==================== 🛡️ 3-CHANNEL FORCE JOIN CHECK ====================
+def check_all_joined(user_id):
     if user_id == ADMIN_ID:
         return True
-    if not CHANNEL_ID:
-        return True
-    try:
-        member = bot.get_chat_member(CHANNEL_ID, user_id)
-        if member.status in ['creator', 'administrator', 'member', 'restricted']:
-            return True
-        return False
-    except Exception as e:
-        print(f"Force Join Check Error for User {user_id}: {e}")
-        return False
+    for ch in CHANNELS:
+        try:
+            member = bot.get_chat_member(ch["id"], user_id)
+            if member.status not in ['creator', 'administrator', 'member', 'restricted']:
+                return False
+        except Exception:
+            return False
+    return True
 
 def force_join_markup():
-    markup = types.InlineKeyboardMarkup(row_width=1)
-    btn_channel = types.InlineKeyboardButton("📢 Join Channel", url=CHANNEL_LINK)
-    btn_verify = types.InlineKeyboardButton("🔄 Check / Refresh", callback_data="check_join")
-    markup.add(btn_channel, btn_verify)
+    markup = types.InlineKeyboardMarkup(row_width=2)
+    buttons = [types.InlineKeyboardButton(text=ch["name"], url=ch["url"]) for ch in CHANNELS]
+    markup.add(*buttons)
+    markup.add(types.InlineKeyboardButton(text="✅ VERIFY", callback_data="verify_channels"))
     return markup
 
-# ==================== 🔘 INLINE KEYBOARDS ====================
 def user_main_markup():
     markup = types.InlineKeyboardMarkup(row_width=2)
-    b1 = types.InlineKeyboardButton("👨‍💻 Developer", callback_data="dev_info")
-    b2 = types.InlineKeyboardButton("📢 Updates Channel", url=CHANNEL_LINK)
-    b3 = types.InlineKeyboardButton("ℹ️ Help / How to use", callback_data="help_info")
+    b1 = types.InlineKeyboardButton("📱 Number Info", callback_data="svc_number")
+    b2 = types.InlineKeyboardButton("🚗 Vehicle Info", callback_data="svc_vehicle")
+    b3 = types.InlineKeyboardButton("🌾 Ration Info", callback_data="svc_ration")
+    b4 = types.InlineKeyboardButton("🔥 LPG Info", callback_data="svc_lpg")
+    b5 = types.InlineKeyboardButton("🪪 Aadhaar Info", callback_data="svc_aadhaar")
+    b6 = types.InlineKeyboardButton("👨‍💻 Developer", callback_data="dev_info")
+    b7 = types.InlineKeyboardButton("📢 Channel", url=CHANNELS[0]["url"])
+    
     markup.add(b1, b2)
-    markup.add(b3)
+    markup.add(b3, b4)
+    markup.add(b5)
+    markup.add(b6, b7)
     return markup
 
 def admin_panel_markup():
     markup = types.InlineKeyboardMarkup(row_width=2)
-    b1 = types.InlineKeyboardButton("📊 Bot Stats", callback_data="admin_stats")
-    b2 = types.InlineKeyboardButton("📢 Broadcast Msg", callback_data="admin_broadcast")
-    b3 = types.InlineKeyboardButton("👥 Export Users Count", callback_data="admin_users")
-    
-    # Maintenance Toggle Button
-    status_btn = "🔴 Turn OFF Maint." if MAINTENANCE_MODE else "🟢 Turn ON Maint."
-    b4 = types.InlineKeyboardButton(status_btn, callback_data="toggle_maintenance")
-    
-    b5 = types.InlineKeyboardButton("❌ Close Panel", callback_data="close_panel")
+    b1 = types.InlineKeyboardButton("📊 Stats", callback_data="admin_stats")
+    b2 = types.InlineKeyboardButton("📢 Broadcast", callback_data="admin_broadcast")
+    status_text = "🔴 Maint: ON" if maintenance_enabled() else "🟢 Maint: OFF"
+    b3 = types.InlineKeyboardButton(status_text, callback_data="admin_toggle_maint")
+    b4 = types.InlineKeyboardButton("❌ Close", callback_data="close_panel")
     markup.add(b1, b2)
     markup.add(b3, b4)
-    markup.add(b5)
     return markup
 
 # ==================== 🚀 COMMAND HANDLERS ====================
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
     user_id = message.from_user.id
-    username = message.from_user.username
-    first_name = message.from_user.first_name
-    add_user(user_id, username, first_name)
-    
-    # 1. Maintenance Check (Admin bypass)
-    if MAINTENANCE_MODE and user_id != ADMIN_ID:
-        bot.reply_to(
-            message,
-            "🛠️ **बॉट अभी मेंटेनेंस में है!**\n\nसर्वर अपडेट या सुधार का काम चल रहा है। कृपया कुछ समय बाद दोबारा प्रयास करें।",
+    first_name = message.from_user.first_name or "User"
+    add_user(user_id, message.from_user.username, first_name)
+
+    if maintenance_enabled() and user_id != ADMIN_ID:
+        bot.reply_to(message, "🛠 **Bot Maintenance Mode me hai!**\nकृपया कुछ समय बाद पुनः प्रयास करें।", parse_mode='Markdown')
+        return
+
+    if not check_all_joined(user_id):
+        caption_text = (
+            f"Hey 👋 **{first_name.upper()}**\n\n"
+            f"🔥 **Join all the channels to use the bot** 🔥"
+        )
+        bot.send_photo(
+            chat_id=message.chat.id,
+            photo=WELCOME_PHOTO_URL,
+            caption=caption_text,
+            reply_markup=force_join_markup(),
             parse_mode='Markdown'
         )
         return
 
-    # 2. Force Join Check
-    if not is_user_joined(user_id):
-        text = (
-            "⚠️ **Access Denied!**\n\n"
-            "👋 Namaste! Bot ka istemal karne ke liye aapko pehle hamare official channel ko join karna hoga.\n\n"
-            "👉 Niche diye gaye button par click karke channel join karein aur fir **'Check / Refresh'** dabayein!"
-        )
-        bot.reply_to(message, text, parse_mode='Markdown', reply_markup=force_join_markup())
-        return
-
-    welcome_text = (
-        f"✨ **Welcome to Sandesh Number Info** ✨\n\n"
-        f"👋 Hello **{first_name}**!\n\n"
-        f"🔍 *Yahan aap kisi bhi 10 ankon ke mobile number ki information search kar sakte hain.*\n\n"
-        f"📱 **Istemal kaise karein:**\n"
-        f"Bas mujhe koi bhi 10 digits ka mobile number send karein.\n\n"
-        f"👑 **Owner & Developer:** [{DEVELOPER_NAME}]({CHANNEL_LINK})\n"
+    user_states.pop(user_id, None)
+    welcome_caption = (
+        f"✨ **Welcome {first_name}!** ✨\n\n"
+        f"नीचे दिए गए बटनों में से अपनी सेवा चुनें:\n\n"
+        f"👨‍💻 **Developer:** [{DEVELOPER_NAME}]({CHANNELS[0]['url']})\n"
         f"💬 **Admin:** {DEVELOPER_TAG}\n"
-        f"🛡️ **Status:** Active & Ready"
+        f"⚡ **Status:** Active & Ready"
     )
-    bot.reply_to(message, welcome_text, parse_mode='Markdown', reply_markup=user_main_markup())
+    bot.send_photo(
+        chat_id=message.chat.id,
+        photo=WELCOME_PHOTO_URL,
+        caption=welcome_caption,
+        reply_markup=user_main_markup(),
+        parse_mode='Markdown'
+    )
 
 @bot.message_handler(commands=['admin'])
 def admin_panel(message):
     if message.from_user.id != ADMIN_ID:
-        bot.reply_to(message, "⛔ Aapke paas is command ko use karne ki permission nahi hai!")
         return
-    status_text = "चालू (ON) 🔴" if MAINTENANCE_MODE else "बंद (OFF) 🟢"
-    bot.reply_to(
-        message, 
-        f"👑 **Welcome Admin Sandesh!**\n\n⚙️ **Maintenance Status:** `{status_text}`\n\nNiche diye gaye options se bot control karein:", 
-        parse_mode='Markdown', 
-        reply_markup=admin_panel_markup()
-    )
+    bot.reply_to(message, "👑 **Admin Control Panel**", parse_mode='Markdown', reply_markup=admin_panel_markup())
 
 @bot.message_handler(commands=['broadcast'])
 def broadcast_command(message):
     if message.from_user.id != ADMIN_ID:
         return
-    msg = bot.reply_to(message, "📢 **Broadcast Mode:**\n\nKripya wo message bhejein jo sabhi users ko send karna hai (Text, Photo, Forwarded message):\n(Cancel karne ke liye /cancel likhein)", parse_mode='Markdown')
+    msg = bot.reply_to(message, "📢 **Broadcast Message भेजें:**\n(रद्द करने के लिए /cancel लिखें)")
     bot.register_next_step_handler(msg, process_broadcast)
 
 def process_broadcast(message):
     if message.text == "/cancel":
         bot.reply_to(message, "❌ Broadcast cancel kar diya gaya.")
         return
-    
     users = get_all_users()
     total = len(users)
-    success = 0
-    failed = 0
-    
-    status_msg = bot.reply_to(message, f"⏳ Broadcast shuru ho raha hai... (Total Users: {total})")
-    
+    success, failed = 0, 0
+    status_msg = bot.reply_to(message, f"⏳ Broadcast शुरू हो रहा है... (Total: {total})")
     for uid in users:
         try:
             bot.copy_message(chat_id=uid, from_chat_id=message.chat.id, message_id=message.message_id)
             success += 1
         except Exception:
             failed += 1
-            
     bot.edit_message_text(
-        f"✅ **Broadcast Completed!**\n\n"
-        f"👥 Total Users: `{total}`\n"
-        f"🟢 Delivered: `{success}`\n"
-        f"🔴 Failed / Blocked: `{failed}`",
+        f"✅ **Broadcast Done!**\n\n👥 Total: `{total}`\n🟢 Delivered: `{success}`\n🔴 Failed: `{failed}`",
         chat_id=message.chat.id,
         message_id=status_msg.message_id,
         parse_mode='Markdown'
     )
 
-# ==================== 🔘 CALLBACK QUERY HANDLER ====================
+# ==================== 🔘 CALLBACK HANDLERS ====================
 @bot.callback_query_handler(func=lambda call: True)
 def handle_callbacks(call):
     user_id = call.from_user.id
-    global MAINTENANCE_MODE
-    
-    if call.data == "check_join":
-        if is_user_joined(user_id):
+
+    if call.data == "verify_channels":
+        if check_all_joined(user_id):
+            bot.answer_callback_query(call.id, "✅ Verification Successful!")
             try:
                 bot.delete_message(call.message.chat.id, call.message.message_id)
             except Exception:
                 pass
             bot.send_message(
                 call.message.chat.id,
-                "✅ **Verification Successful!**\n\nWelcome to Sandesh Number Info! Ab aap koi bhi 10 digit number bhej kar info search kar sakte hain. 🔍",
-                parse_mode='Markdown',
+                f"🎉 **Welcome {call.from_user.first_name}!**\nसत्यापन पूरा हुआ। कृपया नीचे दिए गए विकल्पों में से चुनें:",
                 reply_markup=user_main_markup()
             )
         else:
-            bot.answer_callback_query(call.id, "❌ Aapne abhi tak channel join nahi kiya hai! Pehle join karein.", show_alert=True)
+            bot.answer_callback_query(call.id, "❌ आपने अभी तक सभी चैनल्स जॉइन नहीं किए हैं!", show_alert=True)
 
-    elif call.data == "toggle_maintenance":
-        if user_id != ADMIN_ID:
-            bot.answer_callback_query(call.id, "Access Denied!")
-            return
-        
-        MAINTENANCE_MODE = not MAINTENANCE_MODE
-        status_word = "ON (चालू)" if MAINTENANCE_MODE else "OFF (बंद)"
-        bot.answer_callback_query(call.id, f"✅ Maintenance Mode ab {status_word} hai!")
-        
-        status_text = "चालू (ON) 🔴" if MAINTENANCE_MODE else "बंद (OFF) 🟢"
-        try:
-            bot.edit_message_text(
-                f"👑 **Welcome Admin Sandesh!**\n\n⚙️ **Maintenance Status:** `{status_text}`\n\nNiche diye gaye options se bot control karein:",
-                chat_id=call.message.chat.id,
-                message_id=call.message.message_id,
-                parse_mode='Markdown',
-                reply_markup=admin_panel_markup()
-            )
-        except Exception:
-            pass
-            
+    elif call.data == "svc_number":
+        user_states[user_id] = "waiting_number"
+        bot.answer_callback_query(call.id)
+        bot.send_message(
+            call.message.chat.id,
+            "📱 **Number Info**\n\nकृपया 10 अंकों का मोबाइल नंबर भेजें।\n🔹 **उदाहरण:** `9876543210`",
+            parse_mode='Markdown'
+        )
+
+    elif call.data == "svc_vehicle":
+        user_states[user_id] = "waiting_vehicle"
+        bot.answer_callback_query(call.id)
+        bot.send_message(
+            call.message.chat.id,
+            "🚗 **Vehicle Info**\n\nकृपया गाड़ी का आरसी/पंजीकरण नंबर बिना स्पेस के भेजें।\n🔹 **उदाहरण:** `UP90AF1849`",
+            parse_mode='Markdown'
+        )
+
+    elif call.data == "svc_ration":
+        user_states[user_id] = "waiting_ration"
+        bot.answer_callback_query(call.id)
+        bot.send_message(
+            call.message.chat.id,
+            "🌾 **Ration Info**\n\nकृपया राशन कार्ड नंबर भेजें।\n🔹 **उदाहरण:** `219500123456`",
+            parse_mode='Markdown'
+        )
+
+    elif call.data == "svc_lpg":
+        user_states[user_id] = "waiting_lpg"
+        bot.answer_callback_query(call.id)
+        bot.send_message(
+            call.message.chat.id,
+            "🔥 **LPG Info**\n\nकृपया 17 अंकों की एलपीजी कंज्यूमर आईडी भेजें।\n🔹 **उदाहरण:** `37000000123456789`",
+            parse_mode='Markdown'
+        )
+
+    elif call.data == "svc_aadhaar":
+        user_states[user_id] = "waiting_aadhaar"
+        bot.answer_callback_query(call.id)
+        bot.send_message(
+            call.message.chat.id,
+            "🪪 **Aadhaar Info**\n\nकृपया 12 अंकों का आधार नंबर दर्ज करें।\n🔹 **निर्देश:** 12 अंकों की संख्या भेजें।",
+            parse_mode='Markdown'
+        )
+
     elif call.data == "dev_info":
-        dev_text = (
-            f"👨‍💻 **Developer Information:**\n\n"
-            f"👤 **Name:** {DEVELOPER_NAME}\n"
-            f"💬 **Telegram:** {DEVELOPER_TAG}\n"
-            f"📢 **Channel:** [Click Here]({CHANNEL_LINK})\n"
-            f"⚡ **Version:** 2.0 (Official Edition)"
-        )
         bot.answer_callback_query(call.id)
-        bot.send_message(call.message.chat.id, dev_text, parse_mode='Markdown')
-        
-    elif call.data == "help_info":
-        help_text = (
-            "ℹ️ **How to Use Sandesh Number Info:**\n\n"
-            "1️⃣ Chat me seedha 10 digits ka mobile number type karke bhejein.\n"
-            "2️⃣ Jaise hi number aayega, bot instantly info search karke dikha dega.\n"
-            "3️⃣ Agar koi problem aati hai to channel me admin se contact karein."
-        )
-        bot.answer_callback_query(call.id)
-        bot.send_message(call.message.chat.id, help_text, parse_mode='Markdown')
-        
+        bot.send_message(call.message.chat.id, f"👨‍💻 **Developer:** {DEVELOPER_NAME}\n💬 **Telegram:** {DEVELOPER_TAG}", parse_mode='Markdown')
+
     elif call.data == "admin_stats":
         if user_id != ADMIN_ID:
-            bot.answer_callback_query(call.id, "Access Denied!")
             return
-        total_users, total_searches = get_stats()
-        stats_text = (
-            f"📊 **Bot Current Statistics:**\n\n"
-            f"👥 **Total Registered Users:** `{total_users}`\n"
-            f"🔍 **Total Searches Made:** `{total_searches}`\n"
-            f"⚙️ **Maintenance Mode:** `{'ON' if MAINTENANCE_MODE else 'OFF'}`\n"
-            f"🟢 **Server Status:** Online (24/7)"
-        )
+        u_count, s_count = get_stats()
         bot.answer_callback_query(call.id)
-        bot.send_message(call.message.chat.id, stats_text, parse_mode='Markdown')
-        
-    elif call.data == "admin_broadcast":
-        if user_id != ADMIN_ID:
-            bot.answer_callback_query(call.id, "Access Denied!")
-            return
-        bot.answer_callback_query(call.id)
-        msg = bot.send_message(call.message.chat.id, "📢 **Broadcast Message Bhejein:**\n(Cancel karne ke liye /cancel likhein)")
-        bot.register_next_step_handler(msg, process_broadcast)
-        
-    elif call.data == "admin_users":
+        bot.send_message(call.message.chat.id, f"📊 **Stats:**\n👥 Users: `{u_count}`\n🔍 Searches: `{s_count}`", parse_mode='Markdown')
+
+    elif call.data == "admin_toggle_maint":
         if user_id != ADMIN_ID:
             return
-        total_users, _ = get_stats()
-        bot.answer_callback_query(call.id)
-        bot.send_message(call.message.chat.id, f"👥 Database me abhi total `{total_users}` active users hain.")
-        
+        set_maintenance(not maintenance_enabled())
+        bot.answer_callback_query(call.id, "Maintenance status changed!")
+        try:
+            bot.edit_message_reply_markup(call.message.chat.id, call.message.message_id, reply_markup=admin_panel_markup())
+        except Exception:
+            pass
+
     elif call.data == "close_panel":
         bot.delete_message(call.message.chat.id, call.message.message_id)
 
-# ==================== 🔍 NUMBER SEARCH & ADMIN LOGGER ====================
+# ==================== 📨 TEXT & API EXECUTION HANDLER ====================
 @bot.message_handler(func=lambda message: True)
-def get_number_info(message):
+def handle_text_inputs(message):
     user_id = message.from_user.id
+    first_name = message.from_user.first_name or "User"
     username = f"@{message.from_user.username}" if message.from_user.username else "No Username"
-    first_name = message.from_user.first_name
     add_user(user_id, message.from_user.username, first_name)
-    
-    # 1. Maintenance Check (Admin bypass)
-    if MAINTENANCE_MODE and user_id != ADMIN_ID:
-        bot.reply_to(
-            message,
-            "🛠️ **बॉट अभी मेंटेनेंस में है!**\n\nसर्वर अपडेट या सुधार का काम चल रहा है। कृपया कुछ समय बाद दोबारा प्रयास करें।",
-            parse_mode='Markdown'
-        )
+
+    if maintenance_enabled() and user_id != ADMIN_ID:
+        bot.reply_to(message, "🛠 **Bot Maintenance Mode me hai!**", parse_mode='Markdown')
         return
 
-    # 2. Force Join Check
-    if not is_user_joined(user_id):
-        bot.reply_to(
-            message,
-            "⚠️ **Access Denied!**\n\nBot use karne ke liye pehle hamara channel join karein!",
+    if not check_all_joined(user_id):
+        caption_text = (
+            f"Hey 👋 **{first_name.upper()}**\n\n"
+            f"🔥 **Join all the channels to use the bot** 🔥"
+        )
+        bot.send_photo(
+            chat_id=message.chat.id,
+            photo=WELCOME_PHOTO_URL,
+            caption=caption_text,
             reply_markup=force_join_markup(),
             parse_mode='Markdown'
         )
         return
 
-    number = message.text.strip()
-    
-    # Check if input is 10 digit number
-    if number.isdigit() and len(number) == 10:
-        increment_search()
-        loading_msg = bot.reply_to(message, "🔍 **सर्च किया जा रहा है, कृपया प्रतीक्षा करें...** ⏳", parse_mode='Markdown')
-        
-        # Admin Alert
-        if ADMIN_ID:
-            log_text = (
-                f"🚨 **New Number Search Alert!** 🚨\n\n"
-                f"👤 **User:** [{first_name}](tg://user?id={user_id})\n"
-                f"🆔 **User ID:** `{user_id}`\n"
-                f"🔗 **Username:** {username}\n"
-                f"📱 **Searched Number:** `{number}`\n"
-                f"⏰ **Status:** Executed"
-            )
-            try:
-                bot.send_message(ADMIN_ID, log_text, parse_mode='Markdown')
-            except Exception as e:
-                print(f"Admin log error: {e}")
-        
-        # API URL
-        api_url = f"https://admin.gbssystems.com/public/api/v1/api.php?key=CKHB7&cmd=number&query={number}"
-        
+    text_input = message.text.strip()
+    state = user_states.get(user_id)
+
+    # अगर यूज़र बिना बटन दबाए सीधे 10 अंकों का नंबर भेजता है
+    if not state and text_input.isdigit() and len(text_input) == 10:
+        state = "waiting_number"
+
+    if not state:
+        bot.reply_to(message, "ℹ️ कृपया नीचे दिए गए मेनू से सेवा चुनें:", reply_markup=user_main_markup())
+        return
+
+    service_name = state.replace("waiting_", "")
+    user_states.pop(user_id, None)
+    increment_search()
+
+    loading_msg = bot.reply_to(message, f"🔍 **Searching {service_name.upper()} Details...** ⏳", parse_mode='Markdown')
+
+    # 👑 ADMIN REAL-TIME ALERT: यूज़र की पूरी जानकारी एडमिन को भेजना
+    if ADMIN_ID:
+        admin_alert = (
+            f"🚨 **New {service_name.upper()} Query Alert!** 🚨\n\n"
+            f"👤 **Searched By:** [{first_name}](tg://user?id={user_id})\n"
+            f"🆔 **User ID:** `{user_id}`\n"
+            f"🔗 **Username:** {username}\n"
+            f"🛠️ **Service:** `{service_name.upper()}`\n"
+            f"🔎 **Input:** `{text_input}`\n"
+            f"⏰ **Status:** Executed"
+        )
         try:
-            response = requests.get(api_url, timeout=15)
-            
-            try:
-                data = response.json()
-                formatted_data = json.dumps(data, indent=4, ensure_ascii=False)
-            except Exception:
-                formatted_data = response.text
-            
-            reply_text = (
-                f"🎉 **रिजल्ट सफलतापूर्वक मिल गया!** ✅\n\n"
-                f"📱 **Mobile:** `{number}`\n\n"
-                f"```json\n{formatted_data}\n```\n"
-                f"⚡ Powered by: {DEVELOPER_NAME}"
-            )
-            bot.edit_message_text(reply_text, chat_id=message.chat.id, message_id=loading_msg.message_id, parse_mode='Markdown')
-            
-        except Exception as e:
-            bot.edit_message_text(f"❌ **एरर आया:** `{str(e)}`", chat_id=message.chat.id, message_id=loading_msg.message_id, parse_mode='Markdown')
-    else:
-        bot.reply_to(message, "⚠️ **कृपया सिर्फ 10 अंकों का वैध मोबाइल नंबर भेजें।**\nउदाहरण: `9876543210`", parse_mode='Markdown')
+            bot.send_message(ADMIN_ID, admin_alert, parse_mode='Markdown')
+        except Exception:
+            pass
+
+    # API Request Execution
+    target_api = API_CONFIG.get(service_name, "")
+    if not target_api:
+        bot.edit_message_text(
+            f"⚙️ **{service_name.upper()} API URL** अभी कॉन्फ़िगर नहीं है।",
+            chat_id=message.chat.id,
+            message_id=loading_msg.message_id,
+            parse_mode='Markdown'
+        )
+        return
+
+    try:
+        url = target_api.format(query=text_input)
+        response = requests.get(url, timeout=15)
+        try:
+            data = response.json()
+            result_display = json.dumps(data, indent=2, ensure_ascii=False)
+        except Exception:
+            result_display = response.text
+
+        caption_text = (
+            f"🐍 **{service_name.upper()} SEARCH COMPLETED** 🐍\n\n"
+            f"👤 **Queried By:** {first_name}\n"
+            f"🔎 **Input:** `{text_input}`\n\n"
+            f"📋 **Data:**\n```json\n{result_display[:850]}\n```\n\n"
+            f"⚡ Powered by: {DEVELOPER_NAME}"
+        )
+
+        bot.send_photo(chat_id=message.chat.id, photo=SNAKE_PHOTO_URL, caption=caption_text, parse_mode='Markdown')
+        bot.delete_message(chat_id=message.chat.id, message_id=loading_msg.message_id)
+
+    except Exception as e:
+        bot.edit_message_text(f"❌ एरर आया: `{str(e)}`", chat_id=message.chat.id, message_id=loading_msg.message_id, parse_mode='Markdown')
 
 if __name__ == "__main__":
     print("Bot is starting...")
