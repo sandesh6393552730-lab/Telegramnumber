@@ -39,7 +39,7 @@ SNAKE_PHOTO_URL = "https://images.unsplash.com/photo-1531386151447-fd76ad50012f?
 # 📢 3 चैनल्स की सूची (यहाँ अपने लिंक्स और Negative Chat IDs सेट करें)
 CHANNELS = [
     {"name": "Join 1 ↗", "url": "https://t.me/Dracula_injector_selller", "id": -1002649665421},
-    {"name": "Join 2 ↗", "url": "https://t.me/your_channel_2", "id": -1001234567890},
+    {"name": "Join 2 ↗", "url": "https://t.me/+NJstT20iTmozYjc1", "id": -1001234567890},
     {"name": "Join 3 ↗", "url": "https://t.me/SANDESH_VIP_MOD02", "id": -1002589313551}
 ]
 
