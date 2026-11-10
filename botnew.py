@@ -145,7 +145,7 @@ API_CONFIG = {
     "tgusername": {
         "url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=tgusername&query={query}",
         "name": "Telegram Username",
-        "example": "@XZ1OR"
+        "example": "username likhiye"
     },
     "aadhar": {
         "url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=aadhar&query={query}",
