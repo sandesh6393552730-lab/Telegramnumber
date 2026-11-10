@@ -288,7 +288,7 @@ def handle_callbacks(call):
             parse_mode='Markdown'
         )
 
-    elif call.data == "svc_ration":
+    elif call.data == "svc_all":
         user_states[user_id] = "waiting_ration"
         bot.answer_callback_query(call.id)
         bot.send_message(
@@ -297,7 +297,7 @@ def handle_callbacks(call):
             parse_mode='Markdown'
         )
 
-    elif call.data == "svc_lpg":
+    elif call.data == "svc_tg":
         user_states[user_id] = "waiting_lpg"
         bot.answer_callback_query(call.id)
         bot.send_message(
