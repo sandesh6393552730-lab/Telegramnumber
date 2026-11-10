@@ -289,20 +289,20 @@ def handle_callbacks(call):
         )
 
     elif call.data == "svc_all":
-        user_states[user_id] = "waiting_ration"
+        user_states[user_id] = "waiting_all"
         bot.answer_callback_query(call.id)
         bot.send_message(
             call.message.chat.id,
-            "🌾 **Ration Info**\n\nKripya ration card number bhejein.\n🔹 **Udaharan:** `219500123456`",
+            "🌾 **ALL Info**\n\nKripya r number bhejein.\n🔹 **Udaharan:** `8767646496`",
             parse_mode='Markdown'
         )
 
     elif call.data == "svc_tg":
-        user_states[user_id] = "waiting_lpg"
+        user_states[user_id] = "waiting_tg"
         bot.answer_callback_query(call.id)
         bot.send_message(
             call.message.chat.id,
-            "🔥 **LPG Info**\n\nKripya LPG consumer ID bhejein.\n🔹 **Udaharan:** `37000000123456789`",
+            "🔥 **TELEGRAM Info**\n\nKripya TELEGRAM KI USER bhejein.\n🔹 **Udaharan:** `@DRACULA_INJECTOR_SELLLER`",
             parse_mode='Markdown'
         )
 
