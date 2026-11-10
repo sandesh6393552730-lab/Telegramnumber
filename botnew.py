@@ -57,11 +57,11 @@ CHANNELS = [
 
 # 🔗 5 Services API Endpoints ({query} standardized)
 API_CONFIG = {
-    "number": "https://nitin-developer-api-paid.nitinshab43.workers.dev/api?action=num&number={query}&key=JAANI",
-    "vehicle": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=JGAF5&cmd=rc&query={query}",
-    "ration": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=JGAF5&cmd=ration&query={query}",
-    "lpg": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=JGAF5&cmd=lpg&query={query}",
-    "aadhaar": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=JGAF5&cmd=family&query={query}"
+    "number": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=number&query={query}",
+    "vehicle": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=rc&query={query}",
+    "ration": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=ration&query={query}",
+    "lpg": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=lpg&query={query}",
+    "aadhaar": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NZXZC&cmd=family&query={query}"
 }
 
 bot = telebot.TeleBot(BOT_TOKEN)
