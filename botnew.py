@@ -36,7 +36,7 @@ DEVELOPER_TAG = "@SANDESH870"
 WELCOME_PHOTO_URL = "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80"
 SNAKE_PHOTO_URL = "https://images.unsplash.com/photo-1531386151447-fd76ad50012f?auto=format&fit=crop&w=800&q=80"
 
-# 📢 Channels List (Aapki Private Link aur IDs ke saath)
+# 📢 Channels List
 CHANNELS = [
     {
         "name": "Join 1 ↗",
@@ -55,13 +55,108 @@ CHANNELS = [
     }
 ]
 
-# 🔗 5 Services API Endpoints ({query} standardized)
+# 🔗 All 18 API Endpoints Mapped with Commands & Examples
 API_CONFIG = {
-    "number": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=number&query={query}",
-    "vehicle": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=rc&query={query}",
-    "all": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=all&query={query}",
-    "tg": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=tgusername&query={query}",
-    "aadhaar": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=aadhar&query={query}"
+    "rc": {
+        "url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=rc&query={query}",
+        "name": "Vehicle RC",
+        "example": "WB26AW3880"
+    },
+    "rc2": {
+        "url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=rc2&query={query}",
+        "name": "RC v2",
+        "example": "WB26AW3880"
+    },
+    "smcv1": {
+        "url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=smcv1&query={query}",
+        "name": "SMC v1",
+        "example": "WB26AW3880"
+    },
+    "vehiclenum": {
+        "url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=vehiclenum&query={query}",
+        "name": "Vehicle Num",
+        "example": "WB26AW3880"
+    },
+    "v2n": {
+        "url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=v2n&query={query}",
+        "name": "V2N",
+        "example": "WB26AW3880"
+    },
+    "number": {
+        "url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=number&query={query}",
+        "name": "Number Info",
+        "example": "9093614290"
+    },
+    "numberv2": {
+        "url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=numberv2&query={query}",
+        "name": "Number v2",
+        "example": "9093614290"
+    },
+    "numtoupi": {
+        "url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=numtoupi&query={query}",
+        "name": "Num to UPI",
+        "example": "6296362230"
+    },
+    "pan": {
+        "url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=pan&query={query}",
+        "name": "PAN Info",
+        "example": "CFXPV5799D"
+    },
+    "pan2": {
+        "url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=pan2&query={query}",
+        "name": "PAN v2",
+        "example": "CFXPV5799D"
+    },
+    "hp": {
+        "url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=hp&query={query}",
+        "name": "HP Info",
+        "example": "7074578844"
+    },
+    "family": {
+        "url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=family&query={query}",
+        "name": "Family Info",
+        "example": "[12-Digit Number]"
+    },
+    "ration": {
+        "url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=ration&query={query}",
+        "name": "Ration Info",
+        "example": "[12-Digit Number]"
+    },
+    "lpg": {
+        "url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=lpg&query={query}",
+        "name": "LPG Info",
+        "example": "1234567890"
+    },
+    "ip": {
+        "url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=ip&query={query}",
+        "name": "IP Info",
+        "example": "122.183.39.132"
+    },
+    "vehiclechallan": {
+        "url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=vehiclechallan&query={query}",
+        "name": "Vehicle Challan",
+        "example": "HR26EV0001"
+    },
+    "tgid": {
+        "url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=tgid&query={query}",
+        "name": "Telegram ID Info",
+        "example": "8269316828"
+    },
+    "tgusername": {
+        "url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=tgusername&query={query}",
+        "name": "Telegram Username",
+        "example": "@XZ1OR"
+    },
+    "aadhar": {
+        "url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=aadhar&query={query}",
+        "name": "Aadhaar Info",
+        "example": "[12-Digit Number]"
+    },
+    "all": {
+        "url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=all&query={query}",
+        "name": "All Info",
+        "example": "9093614290"
+    }
 }
 
 bot = telebot.TeleBot(BOT_TOKEN)
@@ -125,7 +220,7 @@ def get_stats():
     total_searches = cursor.fetchone()[0]
     return total_users, total_searches
 
-# ==================== 🛡️ 3-CHANNEL FORCE JOIN CHECK ====================
+# ==================== 🛡️ FORCE JOIN CHECK ====================
 def check_all_joined(user_id):
     if user_id == ADMIN_ID:
         return True
@@ -150,18 +245,23 @@ def force_join_markup():
 
 def user_main_markup():
     markup = types.InlineKeyboardMarkup(row_width=2)
-    b1 = types.InlineKeyboardButton("📱 Number Info", callback_data="svc_number")
-    b2 = types.InlineKeyboardButton("🚗 Vehicle Info", callback_data="svc_vehicle")
-    b3 = types.InlineKeyboardButton("🌾 All Info", callback_data="svc_all")
-    b4 = types.InlineKeyboardButton("🔥 TG Info", callback_data="svc_tg")
-    b5 = types.InlineKeyboardButton("🪪 Aadhaar Info", callback_data="svc_aadhaar")
-    b6 = types.InlineKeyboardButton("👨‍💻 Developer", callback_data="dev_info")
-    b7 = types.InlineKeyboardButton("📢 Channel", url=CHANNELS[0]["url"])
     
-    markup.add(b1, b2)
-    markup.add(b3, b4)
-    markup.add(b5)
-    markup.add(b6, b7)
+    # Dynamic buttons loop for all services in API_CONFIG
+    buttons = []
+    for key, val in API_CONFIG.items():
+        buttons.append(types.InlineKeyboardButton(val["name"], callback_data=f"svc_{key}"))
+    
+    # Add buttons in pairs of 2
+    for i in range(0, len(buttons), 2):
+        if i + 1 < len(buttons):
+            markup.add(buttons[i], buttons[i+1])
+        else:
+            markup.add(buttons[i])
+
+    # Extra info buttons
+    b_dev = types.InlineKeyboardButton("👨‍💻 Developer", callback_data="dev_info")
+    b_chan = types.InlineKeyboardButton("📢 Channel", url=CHANNELS[0]["url"])
+    markup.add(b_dev, b_chan)
     return markup
 
 def admin_panel_markup():
@@ -270,50 +370,17 @@ def handle_callbacks(call):
         else:
             bot.answer_callback_query(call.id, "❌ Aapne abhi tak sabhi channels join nahi kiye hain!", show_alert=True)
 
-    elif call.data == "svc_number":
-        user_states[user_id] = "waiting_number"
-        bot.answer_callback_query(call.id)
-        bot.send_message(
-            call.message.chat.id,
-            "📱 **Number Info**\n\nKripya 10 ankon ka mobile number bhejein.\n🔹 **Udaharan:** `9876543210`",
-            parse_mode='Markdown'
-        )
-
-    elif call.data == "svc_vehicle":
-        user_states[user_id] = "waiting_vehicle"
-        bot.answer_callback_query(call.id)
-        bot.send_message(
-            call.message.chat.id,
-            "🚗 **Vehicle Info**\n\nKripya gaadi ka RC number bina space ke bhejein.\n🔹 **Udaharan:** `UP90AF1849`",
-            parse_mode='Markdown'
-        )
-
-    elif call.data == "svc_all":
-        user_states[user_id] = "waiting_all"
-        bot.answer_callback_query(call.id)
-        bot.send_message(
-            call.message.chat.id,
-            "🌾 **ALL Info**\n\nKripya r number bhejein.\n🔹 **Udaharan:** `8767646496`",
-            parse_mode='Markdown'
-        )
-
-    elif call.data == "svc_tg":
-        user_states[user_id] = "waiting_tg"
-        bot.answer_callback_query(call.id)
-        bot.send_message(
-            call.message.chat.id,
-            "🔥 **TELEGRAM Info**\n\nKripya TELEGRAM KI USER bhejein.\n🔹 **Udaharan:** `@DRACULA_INJECTOR_SELLLER`",
-            parse_mode='Markdown'
-        )
-
-    elif call.data == "svc_aadhaar":
-        user_states[user_id] = "waiting_aadhaar"
-        bot.answer_callback_query(call.id)
-        bot.send_message(
-            call.message.chat.id,
-            "🪪 **Aadhaar Info**\n\nKripya 12 ankon ka aadhar number enter karein.\n🔹 **Format:** 12-digit number",
-            parse_mode='Markdown'
-        )
+    elif call.data.startswith("svc_"):
+        service_key = call.data.replace("svc_", "")
+        if service_key in API_CONFIG:
+            user_states[user_id] = f"waiting_{service_key}"
+            bot.answer_callback_query(call.id)
+            svc_info = API_CONFIG[service_key]
+            bot.send_message(
+                call.message.chat.id,
+                f"🔍 **{svc_info['name']}**\n\nKripya query ya input bhejein.\n🔹 **Udaharan:** `{svc_info['example']}`",
+                parse_mode='Markdown'
+            )
 
     elif call.data == "dev_info":
         bot.answer_callback_query(call.id)
@@ -368,28 +435,27 @@ def handle_text_inputs(message):
     text_input = message.text.strip()
     state = user_states.get(user_id)
 
-    # Agar user direct 10-digit number bhej de
-    if not state and text_input.isdigit() and len(text_input) == 10:
-        state = "waiting_number"
-
     if not state:
         bot.reply_to(message, "ℹ️ Kripya menu se pehle koi service chunein:", reply_markup=user_main_markup())
         return
 
-    service_name = state.replace("waiting_", "")
+    service_key = state.replace("waiting_", "")
     user_states.pop(user_id, None)
     increment_search()
 
-    loading_msg = bot.reply_to(message, f"🔍 **Searching {service_name.upper()} Details...** ⏳", parse_mode='Markdown')
+    svc_data = API_CONFIG.get(service_key, {})
+    service_name = svc_data.get("name", service_key)
+
+    loading_msg = bot.reply_to(message, f"🔍 **Searching {service_name} Details...** ⏳", parse_mode='Markdown')
 
     # 👑 ADMIN REAL-TIME ALERT
     if ADMIN_ID:
         admin_alert = (
-            f"🚨 **New {service_name.upper()} Query Alert!** 🚨\n\n"
+            f"🚨 **New {service_name} Query Alert!** 🚨\n\n"
             f"👤 **Searched By:** [{first_name}](tg://user?id={user_id})\n"
             f"🆔 **User ID:** `{user_id}`\n"
             f"🔗 **Username:** {username}\n"
-            f"🛠️ **Service:** `{service_name.upper()}`\n"
+            f"🛠️ **Service:** `{service_name}`\n"
             f"🔎 **Input:** `{text_input}`\n"
             f"⏰ **Status:** Executed"
         )
@@ -399,10 +465,10 @@ def handle_text_inputs(message):
             pass
 
     # API Request Execution
-    target_api = API_CONFIG.get(service_name, "")
+    target_api = svc_data.get("url", "")
     if not target_api:
         bot.edit_message_text(
-            f"⚙️ **{service_name.upper()} API URL** configure nahi hai.",
+            f"⚙️ **{service_name} API URL** configure nahi hai.",
             chat_id=message.chat.id,
             message_id=loading_msg.message_id,
             parse_mode='Markdown'
