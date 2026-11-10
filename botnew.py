@@ -59,9 +59,9 @@ CHANNELS = [
 API_CONFIG = {
     "number": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=number&query={query}",
     "vehicle": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=rc&query={query}",
-    "ration": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=ration&query={query}",
-    "lpg": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=lpg&query={query}",
-    "aadhaar": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NZXZC&cmd=family&query={query}"
+    "All": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=all&query={query}",
+    "TG": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=tgusername&query={query}",
+    "aadhaar": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=aadhar&query={query}"
 }
 
 bot = telebot.TeleBot(BOT_TOKEN)
@@ -152,8 +152,8 @@ def user_main_markup():
     markup = types.InlineKeyboardMarkup(row_width=2)
     b1 = types.InlineKeyboardButton("📱 Number Info", callback_data="svc_number")
     b2 = types.InlineKeyboardButton("🚗 Vehicle Info", callback_data="svc_vehicle")
-    b3 = types.InlineKeyboardButton("🌾 Ration Info", callback_data="svc_ration")
-    b4 = types.InlineKeyboardButton("🔥 LPG Info", callback_data="svc_lpg")
+    b3 = types.InlineKeyboardButton("🌾 All Info", callback_data="svc_ALL")
+    b4 = types.InlineKeyboardButton("🔥 TG Info", callback_data="svc_TG")
     b5 = types.InlineKeyboardButton("🪪 Aadhaar Info", callback_data="svc_aadhaar")
     b6 = types.InlineKeyboardButton("👨‍💻 Developer", callback_data="dev_info")
     b7 = types.InlineKeyboardButton("📢 Channel", url=CHANNELS[0]["url"])
