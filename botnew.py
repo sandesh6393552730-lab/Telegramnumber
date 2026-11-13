@@ -5,6 +5,7 @@ import json
 import sqlite3
 import os
 import re
+import html
 from io import BytesIO
 from gtts import gTTS
 from threading import Thread
@@ -15,7 +16,7 @@ app = Flask('')
 
 @app.route('/')
 def home():
-    return "⚡ Sandesh Ultra-VIP Bot is Running 24/7!"
+    return "⚡ Sandesh Ultra-VIP AI & Lookup Bot is Running 24/7!"
 
 def run_web():
     port = int(os.environ.get("PORT", 8080))
@@ -29,20 +30,23 @@ def keep_alive():
 keep_alive()
 
 # ==================== ⚙️ CONFIGURATION ====================
-# पुराना मेन बॉट टोकन (GitHub / Render लाइव के लिए)
 BOT_TOKEN = "8852300357:AAHHfKP6qsbdJcNXhZP0UWIqTWrAWgSA2n4"
+GEMINI_API_KEY = "AQ.Ab8RN6LDB1oSEQrrOQX7YpnMyhNoLfJ7sIBJx8kI2QRn_hY81A"
 ADMIN_ID = 1752541652
 
 DEVELOPER_NAME = "SANDESH SINGH"
 DEVELOPER_TAG = "@SANDESH870"
 ADMIN_PROFILE_URL = "https://t.me/SANDESH870"
 
+user_chat_history = {}  # हर यूज़र की पिछली बातचीत याद रखने के लिए
+ai_disabled_users = set()  # जो यूज़र AI ऑफ करना चाहें
+
 # 🖼️ Ultra-HD 3D Neon & Cyberpunk Banner Images
 WELCOME_3D_PHOTO = "https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?auto=format&fit=crop&w=1000&q=90"
 RESULT_3D_PHOTO = "https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead?auto=format&fit=crop&w=1000&q=90"
 LOCK_3D_PHOTO = "https://images.unsplash.com/photo-1639322537228-f710d846310a?auto=format&fit=crop&w=1000&q=90"
 
-# 📢 3 Channels List (बिल्कुल ओल्ड वाले ही हैं, कोई बदलाव नहीं)
+# 📢 3 Channels List
 CHANNELS = [
     {
         "name": "🔥 JOIN CHANNEL 1 ↗",
@@ -92,116 +96,79 @@ def admin_footer(use_premium=True):
 
 # 🔗 All 20 API Endpoints Mapped
 API_CONFIG = {
-    "rc": {
-        "url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=rc&query={query}",
-        "name": "🚗 Vehicle RC",
-        "example": "WB26AW3880"
-    },
-    "rc2": {
-        "url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=rc2&query={query}",
-        "name": "🚘 RC v2",
-        "example": "WB26AW3880"
-    },
-    "smcv1": {
-        "url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=smcv1&query={query}",
-        "name": "🚙 SMC v1",
-        "example": "WB26AW3880"
-    },
-    "vehiclenum": {
-        "url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=vehiclenum&query={query}",
-        "name": "🔢 Vehicle Num",
-        "example": "WB26AW3880"
-    },
-    "v2n": {
-        "url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=v2n&query={query}",
-        "name": "📲 V2N Lookup",
-        "example": "WB26AW3880"
-    },
-    "number": {
-        "url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=number&query={query}",
-        "name": "📱 Number Info",
-        "example": "9093614290"
-    },
-    "numberv2": {
-        "url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=numberv2&query={query}",
-        "name": "📞 Number v2",
-        "example": "9093614290"
-    },
-    "numtoupi": {
-        "url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=numtoupi&query={query}",
-        "name": "💳 Num to UPI",
-        "example": "6296362230"
-    },
-    "pan": {
-        "url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=pan&query={query}",
-        "name": "🪪 PAN Info",
-        "example": "CFXPV5799D"
-    },
-    "pan2": {
-        "url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=pan2&query={query}",
-        "name": "🆔 PAN v2",
-        "example": "CFXPV5799D"
-    },
-    "hp": {
-        "url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=hp&query={query}",
-        "name": "⛽ HP Gas Info",
-        "example": "7074578844"
-    },
-    "family": {
-        "url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=family&query={query}",
-        "name": "👨‍👩‍👧‍👦 Family Info",
-        "example": "[12-Digit Number]"
-    },
-    "ration": {
-        "url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=ration&query={query}",
-        "name": "🌾 Ration Info",
-        "example": "[12-Digit Number]"
-    },
-    "lpg": {
-        "url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=lpg&query={query}",
-        "name": "🔥 LPG Info",
-        "example": "1234567890"
-    },
-    "ip": {
-        "url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=ip&query={query}",
-        "name": "🌐 IP Info",
-        "example": "122.183.39.132"
-    },
-    "vehiclechallan": {
-        "url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=vehiclechallan&query={query}",
-        "name": "🚨 Vehicle Challan",
-        "example": "HR26EV0001"
-    },
-    "tgid": {
-        "url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=tgid&query={query}",
-        "name": "🤖 TG ID Info",
-        "example": "8269316828"
-    },
-    "tgusername": {
-        "url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=tgusername&query={query}",
-        "name": "👤 TG Username",
-        "example": "username likhiye"
-    },
-    "aadhar": {
-        "url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=aadhar&query={query}",
-        "name": "🆔 Aadhaar Info",
-        "example": "[12-Digit Number]"
-    },
-    "all": {
-        "url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=all&query={query}",
-        "name": "⚡ All Info",
-        "example": "9093614290"
-    }
+    "rc": {"url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=rc&query={query}", "name": "🚗 Vehicle RC", "example": "WB26AW3880"},
+    "rc2": {"url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=rc2&query={query}", "name": "🚘 RC v2", "example": "WB26AW3880"},
+    "smcv1": {"url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=smcv1&query={query}", "name": "🚙 SMC v1", "example": "WB26AW3880"},
+    "vehiclenum": {"url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=vehiclenum&query={query}", "name": "🔢 Vehicle Num", "example": "WB26AW3880"},
+    "v2n": {"url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=v2n&query={query}", "name": "📲 V2N Lookup", "example": "WB26AW3880"},
+    "number": {"url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=number&query={query}", "name": "📱 Number Info", "example": "9093614290"},
+    "numberv2": {"url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=numberv2&query={query}", "name": "📞 Number v2", "example": "9093614290"},
+    "numtoupi": {"url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=numtoupi&query={query}", "name": "💳 Num to UPI", "example": "6296362230"},
+    "pan": {"url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=pan&query={query}", "name": "🪪 PAN Info", "example": "CFXPV5799D"},
+    "pan2": {"url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=pan2&query={query}", "name": "🆔 PAN v2", "example": "CFXPV5799D"},
+    "hp": {"url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=hp&query={query}", "name": "⛽ HP Gas Info", "example": "7074578844"},
+    "family": {"url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=family&query={query}", "name": "👨‍👩‍👧‍👦 Family Info", "example": "[12-Digit Number]"},
+    "ration": {"url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=ration&query={query}", "name": "🌾 Ration Info", "example": "[12-Digit Number]"},
+    "lpg": {"url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=lpg&query={query}", "name": "🔥 LPG Info", "example": "1234567890"},
+    "ip": {"url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=ip&query={query}", "name": "🌐 IP Info", "example": "122.183.39.132"},
+    "vehiclechallan": {"url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=vehiclechallan&query={query}", "name": "🚨 Vehicle Challan", "example": "HR26EV0001"},
+    "tgid": {"url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=tgid&query={query}", "name": "🤖 TG ID Info", "example": "8269316828"},
+    "tgusername": {"url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=tgusername&query={query}", "name": "👤 TG Username", "example": "username likhiye"},
+    "aadhar": {"url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=aadhar&query={query}", "name": "🆔 Aadhaar Info", "example": "[12-Digit Number]"},
+    "all": {"url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=all&query={query}", "name": "⚡ All Info", "example": "9093614290"}
 }
 
 bot = telebot.TeleBot(BOT_TOKEN)
 user_states = {}
 voice_enabled_users = set()
 
+# ==================== 🧠 GEMINI CONVERSATIONAL AI ENGINE ====================
+def ask_sandesh_ai(user_id, user_name, user_query):
+    history = user_chat_history.get(user_id, [])
+    history_text = "\n".join(history[-6:])
+
+    system_prompt = (
+        f"तुम 'SANDESH VIP AI' हो, जिसे {DEVELOPER_NAME} ({DEVELOPER_TAG}) ने बनाया है। "
+        f"तुम बिल्कुल एक स्मार्ट, दोस्ताना और समझदार AI असिस्टेंट की तरह बात करते हो। "
+        f"यूज़र का नाम {user_name} है। यूज़र जिस भाषा (हिंदी, हिंग्लिश या इंग्लिश) में बात करे, उसी अंदाज़ में सटीक, साफ़ और मददगार जवाब दो। "
+        f"जवाब बहुत लंबा न रखें (अधिकतम 150-200 शब्दों में रखें) ताकि टेलीग्राम पर पढ़ने में अच्छा लगे।\n\n"
+        f"पिछली बातचीत:\n{history_text}\n"
+        f"यूज़र ({user_name}): {user_query}\n"
+        f"SANDESH VIP AI:"
+    )
+
+    try:
+        api_url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent"
+        headers = {
+            "Content-Type": "application/json",
+            "X-goog-api-key": GEMINI_API_KEY
+        }
+        payload = {
+            "contents": [
+                {
+                    "parts": [{"text": system_prompt}]
+                }
+            ]
+        }
+        res = requests.post(api_url, headers=headers, json=payload, timeout=20)
+        data = res.json()
+        
+        reply_text = data["candidates"][0]["content"]["parts"][0]["text"].strip()
+        
+        history.append(f"User: {user_query}")
+        history.append(f"AI: {reply_text}")
+        user_chat_history[user_id] = history[-8:]
+        
+        return html.escape(reply_text)
+    except Exception as e:
+        print(f"[Gemini AI Error]: {e}")
+        return "भाई अभी AI सर्वर पर थोड़ा लोड है, कृपया कुछ सेकंड बाद फिर से पूछें या नीचे दिए गए मेनू से कोई सर्विस चुनें!"
+
 # ==================== 🎙️ VOICE ASSISTANT ENGINE ====================
 def send_voice_summary(chat_id, text_to_speak, caption="🎙️ AI Voice Information Assistant"):
     try:
-        tts = gTTS(text=text_to_speak, lang='hi', slow=False)
+        clean_speech = re.sub(r'<[^>]+>', '', text_to_speak)[:450]
+        tts = gTTS(text=clean_speech, lang='hi', slow=False)
         audio_fp = BytesIO()
         tts.write_to_fp(audio_fp)
         audio_fp.seek(0)
@@ -333,7 +300,6 @@ def check_all_joined(user_id, force_check_admin=False):
             return False
     return True
 
-# 🎨 COLORED BUTTON HELPER (Blue & Green Telegram UI)
 def make_btn(text, callback_data=None, url=None, style=None):
     try:
         if url:
@@ -367,7 +333,7 @@ def send_force_join_screen(chat_id, first_name, reply_to_id=None):
             f"╚══════════════════════╝\n\n"
             f"{em('user', p)} <b>HELLO, {first_name}!</b>\n"
             f"━━━━━━━━━━━━━━━━━━━━━━\n"
-            f"{em('fire', p)} <b>TO UNLOCK ALL 20 VIP LOOKUP TOOLS, YOU MUST JOIN ALL 3 OFFICIAL CHANNELS BELOW:</b>\n\n"
+            f"{em('fire', p)} <b>TO UNLOCK ALL 20 VIP LOOKUP TOOLS &amp; AI CHAT, JOIN ALL 3 CHANNELS BELOW:</b>\n\n"
             f"{em('join', p)} <b>1.</b> <a href='{CHANNELS[0]['url']}'><b>VIP CHANNEL 01</b></a>\n"
             f"{em('join', p)} <b>2.</b> <a href='{CHANNELS[1]['url']}'><b>VIP PRIVATE HUB 02</b></a>\n"
             f"{em('join', p)} <b>3.</b> <a href='{CHANNELS[2]['url']}'><b>VIP MODS &amp; TOOLS 03</b></a>\n\n"
@@ -390,12 +356,15 @@ def user_main_markup(user_id=None):
         else:
             markup.add(buttons[i])
 
-    voice_status = "🎙️ VOICE ASSISTANT: ON" if (user_id in voice_enabled_users) else "🎙️ VOICE ASSISTANT: OFF"
+    ai_status = "🤖 AI CHAT: ON" if (user_id not in ai_disabled_users) else "🤖 AI CHAT: OFF"
+    voice_status = "🎙️ VOICE: ON" if (user_id in voice_enabled_users) else "🎙️ VOICE: OFF"
+    
+    b_ai = make_btn(ai_status, callback_data="toggle_ai", style="success")
     b_voice = make_btn(voice_status, callback_data="toggle_voice", style="success")
     b_contact = make_btn(f"💬 CONTACT ADMIN ({DEVELOPER_TAG})", url=ADMIN_PROFILE_URL, style="success")
     b_chan = make_btn("📢 OFFICIAL CHANNEL", url=CHANNELS[0]["url"], style="primary")
     
-    markup.add(b_voice)
+    markup.add(b_ai, b_voice)
     markup.add(b_contact)
     markup.add(b_chan)
     return markup
@@ -435,7 +404,6 @@ def send_welcome(message):
         )
         return
 
-    # 🔒 FORCE-JOIN CHECK
     if not check_all_joined(user_id):
         send_force_join_screen(message.chat.id, first_name, reply_to_id=message.message_id)
         return
@@ -445,18 +413,23 @@ def send_welcome(message):
         return (
             f"<blockquote>"
             f"╔══════════════════════╗\n"
-            f"   {em('rocket', p)} <b>VIP INTELLIGENCE HUB</b> {em('rocket', p)}\n"
+            f"   {em('rocket', p)} <b>VIP INTELLIGENCE &amp; AI HUB</b> {em('rocket', p)}\n"
             f"╚══════════════════════╝\n\n"
-            f"{em('star', p)} <b>WELCOME, {first_name}!</b>\n"
+            f"{em('star', p)} <b>WELCOME, <a href='tg://user?id={user_id}'>{first_name}</a>!</b>\n"
             f"━━━━━━━━━━━━━━━━━━━━━━\n"
             f"{em('bolt', p)} <b>20+ ULTRA-FAST LOOKUP APIS UNLOCKED</b>\n"
+            f"🤖 <b>SMART AI CHAT :</b> DIRECT MESSAGE KAREIN BAAT KARNE KE LIYE\n"
             f"{em('mic', p)} <b>AI VOICE ASSISTANT :</b> ENABLE FOR AUDIO REPORTS\n"
-            f"{em('shield', p)} <b>SECURITY :</b> ENCRYPTED &amp; VERIFIED\n"
             f"{em('verify', p)} <b>STATUS :</b> <b>ONLINE &amp; READY</b>"
             f"{admin_footer(p)}"
             f"</blockquote>"
         )
     send_vip_photo(message.chat.id, WELCOME_3D_PHOTO, build_welcome_caption, reply_to_id=message.message_id, markup=user_main_markup(user_id))
+
+@bot.message_handler(commands=['clear'])
+def clear_ai_memory(message):
+    user_chat_history.pop(message.from_user.id, None)
+    bot.reply_to(message, "🧹 <b>AI Chat Memory Cleared!</b> अब आप नई बातचीत शुरू कर सकते हैं।", parse_mode='HTML')
 
 @bot.message_handler(commands=['testjoin'])
 def test_join_preview(message):
@@ -541,9 +514,9 @@ def handle_callbacks(call):
                     f"╔══════════════════════╗\n"
                     f"   {em('verify', p)} <b>VERIFICATION PASSED</b> {em('verify', p)}\n"
                     f"╚══════════════════════╝\n\n"
-                    f"{em('star', p)} <b>WELCOME TO VIP PANEL, {first_name}!</b>\n"
+                    f"{em('star', p)} <b>WELCOME TO VIP PANEL, <a href='tg://user?id={user_id}'>{first_name}</a>!</b>\n"
                     f"━━━━━━━━━━━━━━━━━━━━━━\n"
-                    f"{em('bolt', p)} <b>CHOOSE ANY SERVICE BELOW:</b>"
+                    f"{em('bolt', p)} <b>CHOOSE ANY SERVICE OR ASK AI ANYTHING:</b>"
                     f"{admin_footer(p)}"
                     f"</blockquote>"
                 )
@@ -555,16 +528,28 @@ def handle_callbacks(call):
         bot.answer_callback_query(call.id, "Showing Force-Join Preview...")
         send_force_join_screen(call.message.chat.id, first_name)
 
+    elif call.data == "toggle_ai":
+        if user_id in ai_disabled_users:
+            ai_disabled_users.remove(user_id)
+            bot.answer_callback_query(call.id, "🤖 AI Chat Mode ON! Ab aap bot se kuch bhi pooch sakte hain.")
+        else:
+            ai_disabled_users.add(user_id)
+            bot.answer_callback_query(call.id, "💤 AI Chat Mode OFF kar diya gaya.")
+        try:
+            bot.edit_message_reply_markup(call.message.chat.id, call.message.message_id, reply_markup=user_main_markup(user_id))
+        except Exception:
+            pass
+
     elif call.data == "toggle_voice":
         if user_id in voice_enabled_users:
             voice_enabled_users.remove(user_id)
             bot.answer_callback_query(call.id, "🔇 Voice Assistant OFF kar diya gaya.")
         else:
             voice_enabled_users.add(user_id)
-            bot.answer_callback_query(call.id, "🎙️ Voice Assistant ON! Ab har search ki audio report bhi milegi.")
+            bot.answer_callback_query(call.id, "🎙️ Voice Assistant ON! Ab har report aur AI jawab audio mein bhi milega.")
             send_voice_summary(
                 call.message.chat.id,
-                f"नमस्ते {first_name}! आपका इनफॉरमेशन वॉयस असिस्टेंट सक्रिय हो गया है। अब आप जो भी जानकारी सर्च करेंगे, मैं उसे पढ़कर भी सुनाऊंगा।",
+                f"नमस्ते {first_name}! आपका वॉयस असिस्टेंट सक्रिय हो गया है।",
                 caption="🎙️ <b>Voice Information Assistant Active</b>"
             )
         try:
@@ -634,7 +619,7 @@ def handle_callbacks(call):
     elif call.data == "close_panel":
         bot.delete_message(call.message.chat.id, call.message.message_id)
 
-# ==================== 📨 TEXT & API EXECUTION HANDLER ====================
+# ==================== 📨 TEXT, AI CHAT & API EXECUTION HANDLER ====================
 @bot.message_handler(func=lambda message: True)
 def handle_text_inputs(message):
     user_id = message.from_user.id
@@ -657,15 +642,36 @@ def handle_text_inputs(message):
     text_input = message.text.strip()
     state = user_states.get(user_id)
 
+    # 🤖 अगर कोई सर्विस बटन नहीं दबाया है तो SMART AI ASSISTANT बात करेगा
     if not state:
-        send_vip_message(
-            message.chat.id,
-            lambda p: f"<blockquote>{em('bolt', p)} <b>PLEASE SELECT A SERVICE FROM MENU BELOW:</b>{admin_footer(p)}</blockquote>",
-            reply_to_id=message.message_id,
-            markup=user_main_markup(user_id)
-        )
+        if user_id not in ai_disabled_users:
+            bot.send_chat_action(message.chat.id, 'typing')
+            ai_reply = ask_sandesh_ai(user_id, first_name, text_input)
+            send_vip_message(
+                message.chat.id,
+                lambda p: (
+                    f"<blockquote>"
+                    f"{em('rocket', p)} <b>SANDESH VIP AI</b>\n"
+                    f"━━━━━━━━━━━━━━━━━━━━━━\n"
+                    f"{ai_reply}"
+                    f"{admin_footer(p)}"
+                    f"</blockquote>"
+                ),
+                reply_to_id=message.message_id,
+                markup=user_main_markup(user_id)
+            )
+            if user_id in voice_enabled_users:
+                send_voice_summary(message.chat.id, ai_reply, caption="🎙️ <b>AI Voice Reply</b>")
+        else:
+            send_vip_message(
+                message.chat.id,
+                lambda p: f"<blockquote>{em('bolt', p)} <b>PLEASE SELECT A SERVICE FROM MENU BELOW (OR TURN ON AI CHAT):</b>{admin_footer(p)}</blockquote>",
+                reply_to_id=message.message_id,
+                markup=user_main_markup(user_id)
+            )
         return
 
+    # 🔍 अगर किसी API सर्विस का इनपुट आया है
     service_key = state.replace("waiting_", "")
     user_states.pop(user_id, None)
     increment_search()
@@ -679,12 +685,22 @@ def handle_text_inputs(message):
         reply_to_id=message.message_id
     )
 
-    # 👑 ADMIN REAL-TIME ALERT
+    # 👑 ADMIN REAL-TIME ALERT (Clickable Profile Link ke saath)
     if ADMIN_ID:
         try:
             bot.send_message(
                 ADMIN_ID,
-                f"<blockquote>🚨 <b>NEW {service_name.upper()} QUERY</b>\n━━━━━━━━━━━━━━━━━━━━━━\n👤 <b>USER :</b> {first_name} (<code>{user_id}</code>)\n🔗 <b>USERNAME :</b> {username}\n🔎 <b>INPUT :</b> <code>{text_input}</code>{admin_footer(False)}</blockquote>",
+                (
+                    f"<blockquote>"
+                    f"🚨 <b>NEW {service_name.upper()} QUERY</b>\n"
+                    f"━━━━━━━━━━━━━━━━━━━━━━\n"
+                    f"👤 <b>USER :</b> <a href='tg://user?id={user_id}'><b>{first_name}</b></a>\n"
+                    f"🆔 <b>USER ID :</b> <code>{user_id}</code>\n"
+                    f"🔗 <b>USERNAME :</b> {username}\n"
+                    f"🔎 <b>INPUT :</b> <code>{text_input}</code>"
+                    f"{admin_footer(False)}"
+                    f"</blockquote>"
+                ),
                 parse_mode='HTML',
                 disable_web_page_preview=True
             )
@@ -718,10 +734,10 @@ def handle_text_inputs(message):
                 f"╔══════════════════════╗\n"
                 f"   {em('verify', p)} <b>{service_name.upper()} REPORT</b>\n"
                 f"╚══════════════════════╝\n\n"
-                f"{em('user', p)} <b>QUERIED BY :</b> {first_name}\n"
+                f"{em('user', p)} <b>QUERIED BY :</b> <a href='tg://user?id={user_id}'><b>{first_name}</b></a>\n"
                 f"{em('search', p)} <b>INPUT :</b> <code>{text_input}</code>\n"
                 f"━━━━━━━━━━━━━━━━━━━━━━\n"
-                f"<pre>{result_display[:800]}</pre>"
+                f"<pre>{html.escape(result_display[:800])}</pre>"
                 f"{admin_footer(p)}"
                 f"</blockquote>"
             )
@@ -739,7 +755,7 @@ def handle_text_inputs(message):
 
     except Exception as e:
         bot.edit_message_text(
-            f"<blockquote>❌ <b>ERROR :</b> <code>{str(e)}</code>{admin_footer(False)}</blockquote>",
+            f"<blockquote>❌ <b>ERROR :</b> <code>{html.escape(str(e))}</code>{admin_footer(False)}</blockquote>",
             chat_id=message.chat.id,
             message_id=loading_msg.message_id,
             parse_mode='HTML',
@@ -747,5 +763,5 @@ def handle_text_inputs(message):
         )
 
 if __name__ == "__main__":
-    print("Ultra-VIP 3D Bot is starting...")
+    print("Ultra-VIP 3D AI & Lookup Bot is starting...")
     bot.infinity_polling(none_stop=True, skip_pending=True)
