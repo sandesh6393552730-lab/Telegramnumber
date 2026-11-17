@@ -763,5 +763,11 @@ def handle_text_inputs(message):
         )
 
 if __name__ == "__main__":
-    print("Ultra-VIP 3D AI & Lookup Bot is starting...")
+    try:
+        bot.remove_webhook()
+    except Exception:
+        pass
+    print("Ultra-VIP Bot is starting...")
     bot.infinity_polling(none_stop=True, skip_pending=True)
+
+
