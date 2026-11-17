@@ -101,7 +101,7 @@ API_CONFIG = {
     "smcv1": {"url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=smcv1&query={query}", "name": "🚙 SMC v1", "example": "WB26AW3880"},
     "vehiclenum": {"url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=vehiclenum&query={query}", "name": "🔢 Vehicle Num", "example": "WB26AW3880"},
     "v2n": {"url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=v2n&query={query}", "name": "📲 V2N Lookup", "example": "WB26AW3880"},
-    "number": {"url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=number&query={query}", "name": "📱 Number Info", "example": "9093614290"},
+    "number": {"url": "https://api.allprinthub.in/api?=num_info_767&key=7day&%40Ronak_api={query}", "name": "📱 Number Info", "example": "9093614290"},
     "numberv2": {"url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=numberv2&query={query}", "name": "📞 Number v2", "example": "9093614290"},
     "numtoupi": {"url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=numtoupi&query={query}", "name": "💳 Num to UPI", "example": "6296362230"},
     "pan": {"url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=pan&query={query}", "name": "🪪 PAN Info", "example": "CFXPV5799D"},
