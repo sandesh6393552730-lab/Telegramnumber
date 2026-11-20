@@ -114,7 +114,7 @@ API_CONFIG = {
     "vehiclechallan": {"url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=vehiclechallan&query={query}", "name": "🚨 Vehicle Challan", "example": "HR26EV0001"},
     "tgid": {"url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=tgid&query={query}", "name": "🤖 TG ID Info", "example": "8269316828"},
     "tgusername": {"url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=tgusername&query={query}", "name": "👤 TG Username", "example": "username likhiye"},
-    "aadhar": {"url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=aadhar&query={query}", "name": "🆔 Aadhaar Info", "example": "[12-Digit Number]"},
+    "aadhar": {"url": "https://mafia-official-osint-api-back.vercel.app/ind_addhar?key=mafiademo&q={query}", "name": "🆔 Aadhaar Info", "example": "[12-Digit Number]"},
     "all": {"url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=all&query={query}", "name": "⚡ All Info", "example": "9093614290"}
 }
 
