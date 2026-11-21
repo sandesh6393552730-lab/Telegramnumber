@@ -96,7 +96,7 @@ def admin_footer(use_premium=True):
 
 # 🔗 All 20 API Endpoints Mapped
 API_CONFIG = {
-    "rc": {"url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=rc&query={query}", "name": "🚗 Vehicle RC", "example": "WB26AW3880"},
+    "rc": {"url": "https://api-src.alonepatel.shop/api?key=@ALONE_PATEL&action=vehicle-v3&rc={query}", "name": "🚗 Vehicle RC", "example": "WB26AW3880"},
     "rc2": {"url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=rc2&query={query}", "name": "🚘 RC v2", "example": "WB26AW3880"},
     "smcv1": {"url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=smcv1&query={query}", "name": "🚙 SMC v1", "example": "WB26AW3880"},
     "vehiclenum": {"url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=vehiclenum&query={query}", "name": "🔢 Vehicle Num", "example": "WB26AW3880"},
