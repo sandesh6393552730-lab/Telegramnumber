@@ -111,7 +111,7 @@ API_CONFIG = {
     "ration": {"url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=ration&query={query}", "name": "🌾 Ration Info", "example": "[12-Digit Number]"},
     "lpg": {"url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=lpg&query={query}", "name": "🔥 LPG Info", "example": "1234567890"},
     "ip": {"url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=ip&query={query}", "name": "🌐 IP Info", "example": "122.183.39.132"},
-    "vehiclechallan": {"url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=vehiclechallan&query={query}", "name": "🚨 Vehicle Challan", "example": "HR26EV0001"},
+    "vehiclechallan": {"url": "https://api.allprinthub.in/api?=challan&key=Ronak_api&v={query}", "name": "🚨 Vehicle Challan", "example": "HR26EV0001"},
     "tgid": {"url": "https://api-src.alonepatel.shop/api?key=@ALONE_PATEL&action=tgid&userid={query}", "name": "🤖 TG ID Info", "example": "8269316828"},
     "tgusername": {"url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=tgusername&query={query}", "name": "👤 TG Username", "example": "username likhiye"},
     "aadhar": {"url": "https://mafia-official-osint-api-back.vercel.app/ind_addhar?key=mafiademo&q={query}", "name": "🆔 Aadhaar Info", "example": "[12-Digit Number]"},
