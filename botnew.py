@@ -96,12 +96,12 @@ def admin_footer(use_premium=True):
 
 # 🔗 All 20 API Endpoints Mapped
 API_CONFIG = {
-    "rc": {"url": "https://api-src.alonepatel.shop/api?key=@ALONE_PATEL&action=vehicle-v3&rc={query}", "name": "🚗 Vehicle RC", "example": "WB26AW3880"},
+    "rc": {"url": "", "name": "🚗 Vehicle RC", "example": "WB26AW3880"},
     "rc2": {"url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=rc2&query={query}", "name": "🚘 RC v2", "example": "WB26AW3880"},
     "smcv1": {"url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=smcv1&query={query}", "name": "🚙 SMC v1", "example": "WB26AW3880"},
     "vehiclenum": {"url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=vehiclenum&query={query}", "name": "🔢 Vehicle Num", "example": "WB26AW3880"},
     "v2n": {"url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=v2n&query={query}", "name": "📲 V2N Lookup", "example": "WB26AW3880"},
-    "number": {"url": "https://api-src.alonepatel.shop/api?key=@ALONE_PATEL&action=num&number={query}", "name": "📱 Number Info", "example": "9093614290"},
+    "number": {"url": "https://numbertoinfobymahesh.vercel.app/api?key=ANUJKI_MAA_RANDI&type=num&query={query}", "name": "📱 Number Info", "example": "9093614290"},
     "numberv2": {"url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=numberv2&query={query}", "name": "📞 Number v2", "example": "9093614290"},
     "numtoupi": {"url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=numtoupi&query={query}", "name": "💳 Num to UPI", "example": "6296362230"},
     "pan": {"url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=pan&query={query}", "name": "🪪 PAN Info", "example": "CFXPV5799D"},
@@ -112,7 +112,7 @@ API_CONFIG = {
     "lpg": {"url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=lpg&query={query}", "name": "🔥 LPG Info", "example": "1234567890"},
     "ip": {"url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=ip&query={query}", "name": "🌐 IP Info", "example": "122.183.39.132"},
     "vehiclechallan": {"url": "https://api.allprinthub.in/api?=challan&key=Ronak_api&v={query}", "name": "🚨 Vehicle Challan", "example": "HR26EV0001"},
-    "tgid": {"url": "https://api-src.alonepatel.shop/api?key=@ALONE_PATEL&action=tgid&userid={query}", "name": "🤖 TG ID Info", "example": "8269316828"},
+    "tgid": {"url": "{query}", "name": "🤖 TG ID Info", "example": "8269316828"},
     "tgusername": {"url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=tgusername&query={query}", "name": "👤 TG Username", "example": "username likhiye"},
     "aadhar": {"url": "https://mafia-official-osint-api-back.vercel.app/ind_addhar?key=mafiademo&q={query}", "name": "🆔 Aadhaar Info", "example": "[12-Digit Number]"},
     "all": {"url": "https://admin.gbssystems.com/public/gateway/apiv1/api.php?key=9NXZC&cmd=all&query={query}", "name": "⚡ All Info", "example": "9093614290"}
